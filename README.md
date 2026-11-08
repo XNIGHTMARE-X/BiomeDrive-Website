@@ -6,7 +6,7 @@ v7 is one black design after osply.co (its home and About pages). There are no c
 
 ## The page, top to bottom
 1. **Loader:** a thin bar counts up, then the giant "BiomeDrive" rises and flies into the home header. Once per visit (add `?intro` to the URL to see it again); it clears itself after 9 s if anything fails.
-2. **Home** (after osply.co/about): the giant wordmark with a white bar under it (the nav), a moody panel on the right made of contour lines tilted back into a misty light with film grain (`js/topo.js`; the mouse stirs a swirl in it), a thin arc, "We design, build and host websites…", and a white card that peeks from the bottom and flutters down through the intro as you scroll.
+2. **Home** (after osply.co/about): the giant wordmark with a white bar under it (the nav), contour lines across the whole screen, tilted back so the distance fades into the dark, shaded calmer behind the wordmark and the copy, with film grain (`js/topo.js`; the mouse stirs a swirl in it), "We design, build and host websites…", and a white card that peeks from the bottom and flutters down through the intro as you scroll.
 3. **About:** two big statements whose words brighten as you read.
 4. **What we do:** a drum of services that turns as you scroll.
 5. **Work** (after osply.co): one pinned screen with an endless strip of covers, one per site (its home page, `img/<site>.webp`): ArshGroup, Triptych, Jayaditya G Nair, Naheel N Akhtar and NodeCraft Docs. Drawn with WebGL: a fluid mouse trail ripples the cover edges and leaves a faint smoke, and covers bend while scrolling. Click the middle cover to open the project window, which grows out of it and shows the site's screens (`img/<site>-long.webp`).
