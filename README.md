@@ -32,7 +32,7 @@ Then open http://localhost:5196 (Claude Code has it as `biomedrive` in `F:\Websi
 - `_v1/`, `_v2/`, `_v5/`: earlier versions, kept for reference. `_v5/` has the colour schemes, the Wall / Pile / Fan heroes and the unique-picture wall.
 
 ## Before going live
-- `site/js/main.js`, `CONFIG.email`: replace the placeholder `hello@biomedrive.com` with the real inbox.
+- Contact (`CONFIG` in `site/js/main.js`): the page shows `hello@biomedrive.com`, but clicking it, or sending the form, opens a picker (Gmail, Outlook or the visitor's mail app). The email it starts goes to everyone in `CONFIG.team` (jay@ and naheel@). Those addresses are assembled only when an option is picked, so they never appear on the page. Create `hello@` in Cloudflare Email Routing as well, for anyone who types the address by hand.
 - The services in the drum (`#drum` in `index.html`) are a first draft; keep only what we offer.
 - To add a project: add it to `PROJECTS` in `main.js`, add a 1440x900 home-page screenshot as `img/<site>.webp` and a tall stacked screenshot as `img/<site>-long.webp`, and add it to the hidden `#workList` in `index.html`.
 
