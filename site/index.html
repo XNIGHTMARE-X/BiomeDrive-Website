@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BiomeDrive · Web studio</title>
+<meta name="description" content="BiomeDrive is a two-person web studio. We design, build and host websites for small businesses in the US and Europe.">
+<meta name="theme-color" content="#0b0b0b">
+<meta name="color-scheme" content="dark">
+<meta name="darkreader-lock">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,300..900&family=Inter+Tight:ital,wght@0,300..800;1,300..500&family=Newsreader:ital,opsz,wght@1,6..72,300..500&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=8">
+<script>
+  // Before first paint: reduced motion, and the loader (once per visit; it clears itself after 9 s if anything fails).
+  (function () {
+    var d = document.documentElement;
+    d.classList.add('js');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('calm');
+    var seen = null; try { seen = sessionStorage.getItem('bd-intro'); } catch (e) {}
+    if (!d.classList.contains('calm') && (!seen || /[?&]intro/.test(location.search))) { d.classList.add('loading'); setTimeout(function () { d.classList.remove('loading'); }, 9000); }
+  })();
+</script>
+</head>
+<body>
+<div class="loader" id="loader" aria-hidden="true"><div class="ld-bg"></div><div class="ld-word"><span>BiomeDrive</span></div><div class="ld-bar"><i></i><b id="ldPct">0%</b></div></div>
+<a class="skip" href="#work">Skip to the work</a>
+
+<!-- fixed nav: appears once the home header has scrolled away -->
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="BiomeDrive, back to top">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span>BiomeDrive</span>
+  </a>
+  <nav class="nav-links" aria-label="Sections"><a href="#work">Work</a><a href="#about">About</a><a href="#studio">Studio</a></nav>
+  <a class="nav-cta" href="#contact"><i></i><span class="long">Taking new projects</span><span class="short">Contact</span></a>
+</header>
+
+<main>
+
+<!-- ================= HOME (after osply.co/about) ================= -->
+<div class="intro" id="intro">
+  <section class="home" id="top" aria-label="BiomeDrive web studio">
+    <div class="home-art" aria-hidden="true"><canvas class="terrain" id="terrain"></canvas></div>
+    <div class="home-arc" aria-hidden="true"></div>
+    <header class="home-head">
+      <h1 class="home-word"><span>BiomeDrive</span></h1>
+      <div class="home-bar">
+        <span>Web design studio</span>
+        <nav aria-label="Sections"><a href="#work">Work</a>, <a href="#about">About</a>, <a href="#studio">Studio</a></nav>
+        <a href="#contact">Contact</a>
+      </div>
+    </header>
+    <div class="home-copy">
+      <p class="home-k">(00)</p>
+      <p class="home-lede">We design, build and host websites for small businesses in the US and Europe.</p>
+      <p class="home-links"><a href="#work">See the work ↓</a><a href="#contact">Start a project</a></p>
+    </div>
+    <p class="home-scroll">Scroll down <span>↓</span></p>
+  </section>
+
+  <section class="say" id="about" aria-label="About">
+    <p class="say-p" data-words><span class="say-n">(1)</span>A two-person studio that designs, builds and hosts websites for small businesses: restaurants, builders, shops and clinics, made by hand and never from a template.</p>
+    <p class="say-p say-2" data-words><span class="say-n">(2)</span>We make sites that feel like the business behind them. Fast on every phone, easy to update, and looked after long after launch.</p>
+    <div class="say-small">
+      <p>No page builders and no bloated themes. Hand-written code that loads fast and is easy to find on Google.</p>
+      <p>You talk to the two people who design and build your site, from the first call to every change after launch.</p>
+    </div>
+  </section>
+
+  <!-- the white card that flutters down through the intro -->
+  <div class="card-track" aria-hidden="true"><div class="card-stick"><div class="card3d" id="card3d">
+    <div class="cf cf-front">
+      <p class="cf-big">From first sketch to live site</p>
+      <svg class="cf-art" viewBox="0 0 160 160"><g fill="none" stroke="currentColor" stroke-width=".8">
+        <path d="M0 40H160M0 120H160M40 0V160M120 0V160" opacity=".18"/>
+        <path d="M0 160L160 0" stroke-dasharray="3 4" opacity=".5"/>
+        <path d="M58 22V104A26 26 0 1 0 110 104A26 26 0 1 0 58 104" stroke-width="1.2"/>
+        <circle cx="84" cy="104" r="44" opacity=".35"/>
+        <path d="M58 104H160M84 60V160" stroke-dasharray="2 3" opacity=".45"/>
+        <circle cx="58" cy="22" r="2.2" fill="currentColor"/><circle cx="84" cy="104" r="2.2" fill="currentColor"/><circle cx="110" cy="104" r="2.2" fill="currentColor"/>
+      </g></svg>
+      <p class="cf-small">Design, build, hosting</p>
+    </div>
+    <div class="cf cf-back">
+      <p class="cf-big">Made by hand. Looked after.</p>
+      <svg class="cf-art cf-art-b" viewBox="0 0 160 160"><g fill="none" stroke="currentColor" stroke-width=".8"><path d="M20 140C60 120 70 70 140 20" stroke-dasharray="3 4"/><path d="M20 20H140V140H20Z" opacity=".25"/><circle cx="140" cy="20" r="2.4" fill="currentColor"/><circle cx="20" cy="140" r="2.4" fill="currentColor"/></g></svg>
+      <p class="cf-small">BiomeDrive, web studio</p>
+    </div>
+  </div></div></div>
+</div>
+
+<!-- ================= WHAT WE DO ================= -->
+<section class="drum" id="services" aria-labelledby="drum-h">
+  <div class="drum-stage">
+    <div class="drum-top"><h2 class="drum-k" id="drum-h">(3) What we do</h2><span id="drumCount">01 / 08</span></div>
+    <ul class="drum-list" id="drum">
+      <li>Web design</li><li>Web development</li><li>Hosting &amp; domains</li><li>Booking &amp; forms</li>
+      <li>Dashboards &amp; admin</li><li>Speed &amp; SEO</li><li>Motion &amp; 3D</li><li>Care &amp; updates</li>
+    </ul>
+    <p class="drum-note">Everything a small business needs to be found, trusted and booked online.</p>
+  </div>
+</section>
+
+<!-- ================= WORK: Osply-style index ================= -->
+<section class="work" id="work" aria-labelledby="work-h">
+  <h2 id="work-h" class="sr-only">Selected work</h2>
+  <ul class="sr-only" id="workList">
+    <li><a href="https://arsh-group.in">ArshGroup</a>: a design-build firm’s website.</li>
+    <li><a href="https://triptych-atelier.vercel.app">Triptych</a>: an outfit builder web app.</li>
+    <li><a href="https://jgn-portfolio.vercel.app">Jayaditya G Nair</a>: a portfolio for an AI engineer.</li>
+    <li><a href="https://naheel-n-akhtar.vercel.app/index.html">Naheel N Akhtar</a>: a liquid glass portfolio.</li>
+    <li><a href="https://biomedrive.github.io/nodecraft-docs/">NodeCraft Docs</a>: the docs site for an Unreal Engine plugin.</li>
+  </ul>
+  <div class="ix" id="ix">
+    <div class="ix-stage">
+      <div class="ix-top"><span>(4) Selected work</span><span>Scroll to browse · click to open</span></div>
+      <div class="ix-strip" id="ixStrip"></div>
+      <div class="ix-line">
+        <span class="ix-n" id="ixN">01</span>
+        <div class="ix-info"><span class="ix-tags" id="ixTags">Website, 2026</span><p class="ix-say" id="ixSay"></p></div>
+        <ul class="ix-names" id="ixNames" aria-label="Projects"></ul>
+        <span class="ix-kind" id="ixKind">Construction</span>
+      </div>
+      <div class="ix-foot"><span id="ixCount">01 / 05</span><button type="button" id="ixOpen">Open project ↗</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STUDIO ================= -->
+<section class="team" id="studio" aria-labelledby="team-h">
+  <h2 class="sr-only" id="team-h">Studio</h2>
+  <p class="say-p" data-words><span class="say-n">(5)</span>Two people who care about the details. The designers, the developers and the ones who answer your email.</p>
+  <div class="team-list">
+    <article class="tm">
+      <a class="tm-name" href="https://naheel-n-akhtar.vercel.app/index.html" target="_blank" rel="noopener">Naheel N Akhtar</a>
+      <div><p class="tm-role">Design and front end</p><p>Layouts, animation and the interactive parts people remember.</p></div>
+    </article>
+    <article class="tm">
+      <a class="tm-name" href="https://jgn-portfolio.vercel.app" target="_blank" rel="noopener">Jayaditya G Nair</a>
+      <div><p class="tm-role">Back end, data and AI</p><p>Sign-in, databases, dashboards and the admin screens you use to update things.</p></div>
+    </article>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="contact" id="contact" aria-labelledby="contact-h">
+  <p class="contact-k">(6) Contact</p>
+  <h2 id="contact-h" class="contact-h">Let’s build <em>yours.</em></h2>
+  <div class="contact-grid">
+    <div>
+      <p class="contact-lede">No website yet, or one that’s tired? Tell us about your business and we’ll reply within one business day with ideas and a rough plan.</p>
+      <a class="mail" id="mailLink" href="#">hello@biomedrive.com</a>
+    </div>
+    <form class="form" id="form" novalidate>
+      <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required></div>
+      <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="f-site">Business or current website</label><input id="f-site" name="site" autocomplete="url" placeholder="Optional"></div>
+      <div class="field"><label for="f-msg">What do you need?</label><textarea id="f-msg" name="message" rows="3"></textarea></div>
+      <button class="btn" type="submit">Send <span class="arr">→</span></button>
+      <p class="form-msg" id="formMsg" role="status"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-row">
+    <nav aria-label="Footer"><a href="#work">Work</a><a href="#about">About</a><a href="#studio">Studio</a></nav>
+    <a href="#contact">Contact</a>
+    <p>Remote, for the US and Europe · © <span id="year">2026</span></p>
+    <a href="#top">Back to top ↑</a>
+  </div>
+  <p class="foot-word" aria-hidden="true"><span>BiomeDrive</span></p>
+</footer>
+
+<!-- Project window: opens from the cover you click in the index -->
+<dialog class="pm" id="pm" aria-labelledby="pmName">
+  <div class="pm-in">
+    <figure class="pm-fig"><div class="pm-bar"><i></i><i></i><i></i><span id="pmUrl"></span></div><div class="pm-screen" data-lenis-prevent><img id="pmImg" alt=""></div></figure>
+    <div class="pm-text">
+      <p class="pm-n" id="pmN">01 / 05</p>
+      <h3 class="pm-name" id="pmName">Project</h3>
+      <ul class="tags" id="pmTags"></ul>
+      <p class="pm-p" id="pmP"></p>
+      <p class="credit" id="pmCredit"></p>
+      <a class="btn" id="pmVisit" href="#" target="_blank" rel="noopener">Visit</a>
+      <div class="pm-nav"><button type="button" id="pmPrev">← Previous</button><button type="button" id="pmNext">Next →</button></div>
+    </div>
+    <button type="button" class="pm-x" id="pmX" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+</dialog>
+
+<!-- Lenis 1.1.13 and Motion 11.11.13 (MIT), hosted with the site -->
+<script src="js/vendor/lenis.min.js" defer></script>
+<script src="js/vendor/motion.js" defer></script>
+<script src="js/topo.js?v=8" defer></script>
+<script src="js/main.js?v=8" defer></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# Screenshots and frames made by the test scripts in tools/ (large, and some show other people's contact details)
+tools/cap/
+tools/cap2/
+tools/cap3/
+tools/cap4/
+tools/raw/
+tools/seq/
+tools/shots/
+tools/ix/
+tools/v2/
+tools/v3/
+tools/v4/
+tools/v6/
+tools/v7/
+tools/dbg*.mjs
+
+# Earlier versions kept on disk only
+_v1/
+_v2/
+_v5/
+
+# System and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+node_modules/
