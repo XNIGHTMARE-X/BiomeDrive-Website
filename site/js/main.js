@@ -127,7 +127,7 @@ const PROJECTS = [
   new IntersectionObserver(es => es.forEach(e => (homeVisible = e.isIntersecting))).observe(home);
   let terrain = null, Hi = null;
   if (terrainEl && window.Topo) {
-    terrain = Topo.create(terrainEl, { scale: 400, density: 3.4, speed: 0.8, line: '#ffffff', major: '#ffffff', lineAlpha: 0.17, majorAlpha: 0.36, lineWidth: 1.15, maxDpr: 1.25 });
+    terrain = Topo.create(terrainEl, { scale: 400, density: 3.4, speed: 0.8, line: '#ffffff', major: '#ffffff', lineAlpha: 0.17, majorAlpha: 0.36, lineWidth: 1.8, maxDpr: 1.25 });
   }
   // the canvas's on-screen projection (its own tilt plus the panel's perspective) as a 2D homography,
   // so a mouse position can be mapped back onto the terrain
