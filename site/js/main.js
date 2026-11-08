@@ -4,15 +4,8 @@
    the project index (WebGL covers with a mouse trail) and its project window, and contact.
    Lenis and Motion are optional: the page works without them. */
 
-// ---- Fill this in before going live ----
-const CONFIG = {
-  // The page shows only `shown`@domain. Clicking it (or sending the form) opens a picker, and the
-  // email it starts goes to everyone in `team`. The addresses are put together only when someone
-  // picks an option, so they never appear in the page text or in a link a bot could scrape.
-  shown: 'hello',
-  team: ['jay', 'naheel'],
-  domain: 'biomedrive.com',
-};
+// ---- Contact settings live in js/config.js (shared with the other pages) ----
+const CONFIG = window.BD_CONFIG;
 
 // ---- The projects (the index shows each site's home page as its cover) ----
 const PROJECTS = [
