@@ -1,0 +1,576 @@
+# The Studio's templates. Run from the repo root:  python tools/studio/templates.py
+# Checks every template (category, palette, fonts, hero, sections), gives each one its own photos
+# from the library (no photo is used twice anywhere in the Studio), and writes site/studio/data/templates.js.
+import io, json, os, re, sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+SITE = os.path.join(HERE, '..', '..', 'site', 'studio')
+read = lambda p: io.open(os.path.join(SITE, p), encoding='utf-8').read()
+
+PALETTES = set(re.findall(r'"id": "([^"]+)"', read('data/palettes.js')))
+FONTS = set(re.findall(r"\{ id: '([^']+)'", read('data/fonts.js')))
+CATS = set(re.findall(r'^  (\w+): \{\n    label:', read('data/content.js'), re.M))
+PHOTOS = [json.loads(l.strip().rstrip(',')) for l in read('data/photos.js').splitlines() if l.strip().startswith('{"id"')]
+BY_SET = {}
+for p in PHOTOS:
+    BY_SET.setdefault(p['set'], []).append(p['id'])
+
+HEROES = {'split': 1, 'monument': 1, 'cover': 1, 'poster': 0, 'rescue': 1, 'arch': 1, 'editorial': 1, 'inline': None,
+          'collage': 3, 'menu': 1, 'numbers': 1, 'spotlight': 1, 'map': 0, 'compare': 1, 'stack': 1,
+          'splitR': 1, 'card': 1, 'ticker': 1, 'index': 3, 'banner': 1}
+SECTIONS = {'trust': 0, 'services': 0, 'servicesGrid': 0, 'about': 1, 'stats': 0, 'reviews': 0, 'quote': 0, 'process': 0,
+            'area': 0, 'faq': 0, 'cta': 0, 'statement': 0, 'gallery': 3, 'prices': 0, 'menu': 0, 'visit': 0, 'team': 0,
+            'book': 0, 'contact': 0, 'feature': 1, 'bigband': 0}
+
+# which photo sets suit each kind of business, best first
+SETS = {
+    'plumbing': ['water', 'texture', 'hands-and-making', 'object-still', 'architecture'],
+    'electrical': ['city-night', 'sky-and-space', 'architecture', 'object-still'],
+    'hvac': ['fog-and-quiet', 'mountain', 'architecture', 'interior-and-table'],
+    'roofing': ['architecture', 'city-day', 'sky-and-space', 'mountain'],
+    'construction': ['architecture', 'city-day', 'texture', 'hands-and-making'],
+    'landscaping': ['plants-and-flowers', 'forest', 'field-and-farm', 'mountain'],
+    'cleaning': ['interior-and-table', 'architecture', 'fog-and-quiet', 'plants-and-flowers'],
+    'painting': ['architecture', 'texture', 'city-day', 'interior-and-table'],
+    'handyman': ['hands-and-making', 'object-still', 'texture', 'interior-and-table'],
+    'moving': ['transport', 'desert-and-road', 'city-day', 'architecture'],
+    'auto': ['transport', 'desert-and-road', 'city-night', 'city-day'],
+    'restaurant': ['interior-and-table', 'field-and-farm', 'city-night', 'hands-and-making'],
+    'cafe': ['interior-and-table', 'city-day', 'object-still', 'hands-and-making'],
+    'bakery': ['interior-and-table', 'field-and-farm', 'hands-and-making', 'plants-and-flowers'],
+    'bar': ['city-night', 'interior-and-table', 'city-day'],
+    'salon': ['people', 'plants-and-flowers', 'interior-and-table', 'fog-and-quiet'],
+    'barber': ['people', 'city-night', 'object-still', 'city-day'],
+    'spa': ['water', 'fog-and-quiet', 'plants-and-flowers', 'forest', 'coast'],
+    'dental': ['fog-and-quiet', 'sky-and-space', 'coast', 'plants-and-flowers'],
+    'fitness': ['people', 'mountain', 'coast', 'desert-and-road'],
+    'law': ['architecture', 'city-day', 'fog-and-quiet', 'object-still'],
+    'accounting': ['architecture', 'object-still', 'city-day', 'fog-and-quiet'],
+    'realestate': ['architecture', 'coast', 'interior-and-table', 'city-day'],
+    'photography': ['people', 'coast', 'mountain', 'animals', 'fog-and-quiet'],
+    'florist': ['plants-and-flowers', 'field-and-farm', 'forest', 'animals'],
+}
+FALLBACK = ['fog-and-quiet', 'coast', 'mountain', 'architecture', 'sky-and-space', 'forest', 'water', 'texture', 'city-day']
+
+T = []
+def tpl(**k):
+    T.append(k)
+
+# ---------------------------------------------------------------- batch 1: one per kind of business
+tpl(id='tidewater', name='Tidewater', cat='plumbing', moods=['warm', 'classic'], pal='copper-slate', font='young-source',
+    nav='util', hero='split', secs=['trust', 'services', 'about', 'stats', 'reviews', 'process', 'area', 'faq', 'cta'], foot='cols', r=6, btn='soft',
+    biz=dict(name='Tidewater Plumbing', short='Tidewater', city='Portland', area=['South Portland', 'Westbrook', 'Falmouth', 'Cape Elizabeth', 'Scarborough', 'Gorham'], phone='(207) 555-0148', since=1994, owner='Frank Doyle', addr='48 Commercial St, Portland, ME 04101'),
+    head=['Pipes fixed right,', '*the first time.*'], sub='Licensed plumbers on call day and night across Greater Portland. One fixed price before we start, and a year’s warranty on every repair.')
+
+tpl(id='voltline', name='Voltline', cat='electrical', moods=['dark', 'bold'], pal='live-wire', font='archivo-compressed',
+    nav='util', hero='rescue', secs=['trust', 'servicesGrid', 'stats:fld-2', 'process', 'quote', 'faq', 'cta'], foot='big', r=0, btn='sq', img='mono',
+    biz=dict(name='Voltline Electric', short='Voltline', city='Denver', area=['Aurora', 'Lakewood', 'Englewood', 'Littleton', 'Arvada', 'Wheat Ridge'], phone='(303) 555-0172', since=2006, owner='Marcus Reyes', addr='1210 Larimer St, Denver, CO 80204'),
+    head=['Power out?', 'We’re on our way.'], sub='Master electricians on call around the clock. Faults found fast, fixed to code and signed off before we leave.')
+
+tpl(id='northwind', name='Northwind', cat='hvac', moods=['fresh', 'minimal'], pal='cool-white-slate', font='schibsted-heavy',
+    nav='bar', hero='numbers', secs=['services', 'about:flip', 'process', 'reviews', 'faq', 'cta'], foot='cols', r=4, btn='sq',
+    biz=dict(name='Northwind Heating & Air', short='Northwind', city='Minneapolis', area=['St Paul', 'Edina', 'Bloomington', 'Roseville', 'Plymouth', 'Maple Grove'], phone='(612) 555-0136', since=1988, owner='Karin Lund', addr='300 Washington Ave N, Minneapolis, MN 55401'),
+    head=['Warm in January.', 'Cool in July.'], sub='Furnaces, heat pumps and central air, sized properly, fitted in a day and looked after for years.')
+
+tpl(id='ridgeline', pin=[188], name='Ridgeline', cat='roofing', moods=['bold', 'classic'], pal='slate-sky-rust', font='big-shoulders-public',
+    nav='bar', hero='cover', secs=['trust', 'services', 'gallery', 'stats', 'quote', 'process', 'faq', 'cta'], foot='big', r=0, btn='sq',
+    biz=dict(name='Ridgeline Roofing', short='Ridgeline', city='Charlotte', area=['Matthews', 'Huntersville', 'Concord', 'Gastonia', 'Mint Hill', 'Pineville'], phone='(704) 555-0119', since=1999, owner='Dale Whitaker', addr='2200 South Blvd, Charlotte, NC 28203'),
+    head=['Roofs that outlast', 'the storm.'], sub='Free drone inspections, two-day replacements and a 25-year warranty on every new roof we fit.')
+
+tpl(id='foundry', pin=[855], name='Foundry', cat='construction', moods=['bold'], pal='hi-vis', font='anton-work',
+    nav='bar', hero='monument', secs=['statement', 'servicesGrid', 'process', 'stats:fld-2', 'gallery', 'quote', 'contact'], foot='big', r=0, btn='sq', img='mono',
+    biz=dict(name='Foundry Build Co.', short='Foundry', city='Chicago', area=['Evanston', 'Oak Park', 'Lincoln Park', 'Wicker Park', 'Logan Square', 'Hyde Park'], phone='(312) 555-0184', since=2001, owner='Tom Brennan', addr='1500 W Fulton St, Chicago, IL 60607'),
+    head=['Extensions, kitchens and new homes,', 'built on a fixed price.'], sub='One team, one site manager and a programme you can hold us to.')
+
+tpl(id='greenhaven', name='Greenhaven', cat='landscaping', moods=['fresh', 'warm'], pal='lawn-green', font='bricolage-contrast',
+    nav='bar', hero='map', secs=['services', 'gallery', 'process', 'reviews', 'faq', 'cta'], foot='cols', r=14, btn='pill',
+    biz=dict(name='Greenhaven Gardens', short='Greenhaven', city='Austin', area=['Westlake', 'Round Rock', 'Bee Cave', 'Pflugerville', 'Cedar Park', 'Travis Heights'], phone='(512) 555-0157', since=2009, owner='Rosa Delgado', addr='900 E 6th St, Austin, TX 78702'),
+    head=['Gardens that grow', 'better every year.'], sub='Design, planting and care for gardens across Austin, planted for the heat and built to thrive.')
+
+tpl(id='freshly', name='Freshly', cat='cleaning', moods=['fresh', 'playful'], pal='fresh-mint', font='chillax-semibold',
+    nav='bar', hero='compare', secs=['trust', 'servicesGrid', 'book', 'reviews', 'process', 'faq', 'cta'], foot='cols', r=18, btn='pill', img='soft',
+    biz=dict(name='Freshly Home Cleaning', short='Freshly', city='Seattle', area=['Capitol Hill', 'Ballard', 'Fremont', 'Queen Anne', 'Green Lake', 'West Seattle'], phone='(206) 555-0163', since=2015, owner='Ana Moreau', addr='1400 E Pine St, Seattle, WA 98122'),
+    head=['Come home', 'to *clean.*'], sub='Trusted cleaners, eco-friendly products and the same friendly face every visit. Book in under a minute.')
+
+tpl(id='hue', name='Hue', cat='painting', moods=['playful', 'bold'], pal='card-pastels', font='cabinet-grotesk',
+    nav='bar', hero='poster', secs=['servicesGrid', 'statement', 'gallery', 'process', 'reviews', 'cta'], foot='big', r=10, btn='pill',
+    biz=dict(name='Hue & Co. Decorators', short='Hue & Co.', city='Brooklyn', area=['Park Slope', 'Williamsburg', 'Bed-Stuy', 'Greenpoint', 'Fort Greene', 'Carroll Gardens'], phone='(718) 555-0128', since=2012, owner='Sofia Marchetti', addr='310 Atlantic Ave, Brooklyn, NY 11201'),
+    head=['Fresh walls,', 'clean lines,', 'no mess.'], sub='Interior and exterior painting with proper prep, low-odour paints and a three-year finish guarantee.')
+
+tpl(id='fixwell', pin=[491], name='Fixwell', cat='handyman', moods=['minimal', 'calm'], pal='white-navy-tab', font='albert-sans-semibold',
+    nav='bar', hero='split', secs=['trust', 'servicesGrid', 'prices', 'process', 'reviews', 'faq', 'cta'], foot='cols', r=8, btn='soft',
+    biz=dict(name='Fixwell Handyman', short='Fixwell', city='Columbus', area=['German Village', 'Clintonville', 'Bexley', 'Upper Arlington', 'Worthington', 'Grandview'], phone='(614) 555-0190', since=2011, owner='Dave Kowalski', addr='75 E Gay St, Columbus, OH 43215'),
+    head=['Your to-do list,', 'done in one visit.'], sub='Shelves, doors, flat-pack, TV mounting and all the small repairs, by vetted handymen with clear hourly rates.')
+
+tpl(id='carry', name='Carry', cat='moving', moods=['bold', 'playful'], pal='moving-orange', font='general-sans-bold',
+    nav='bar', hero='stack', secs=['trust', 'services', 'process', 'stats:fld-1', 'reviews', 'faq', 'cta'], foot='big', r=4, btn='pill',
+    biz=dict(name='Carry Movers', short='Carry', city='Phoenix', area=['Scottsdale', 'Tempe', 'Mesa', 'Chandler', 'Glendale', 'Gilbert'], phone='(602) 555-0145', since=2004, owner='Luis Ortega', addr='411 N Central Ave, Phoenix, AZ 85004'),
+    head=['Moving day,', 'minus the stress.'], sub='Packing, moving and storage with our own crews and one fixed price. Beds built before we leave.')
+
+tpl(id='torque', name='Torque', cat='auto', moods=['dark', 'bold'], pal='garage-red', font='barlow-condensed',
+    nav='bar', hero='spotlight', secs=['services', 'book', 'stats:fld-2', 'quote:fld-1', 'faq', 'cta'], foot='big', r=0, btn='sq', img='mono',
+    biz=dict(name='Torque Auto Works', short='Torque', city='Detroit', area=['Dearborn', 'Royal Oak', 'Ferndale', 'Grosse Pointe', 'Livonia', 'Southfield'], phone='(313) 555-0177', since=1997, owner='Andre Wallace', addr='2800 Michigan Ave, Detroit, MI 48216'),
+    head=['Honest repairs.', 'Fast turnarounds.'], sub='Servicing, diagnostics and EV care with a video of every check, so you see what we see before you pay.')
+
+tpl(id='ember', name='Ember & Vine', cat='restaurant', moods=['classic', 'warm'], pal='paper-grey-brass', font='newsreader-light',
+    nav='center', hero='editorial', secs=['statement', 'menu', 'feature', 'about', 'book', 'visit'], foot='cols', r=0, btn='sq', img='warm',
+    biz=dict(name='Ember & Vine', short='Ember & Vine', city='Boston', area=['Back Bay', 'South End', 'Beacon Hill', 'Seaport', 'Cambridge', 'Somerville'], phone='(617) 555-0109', since=2013, owner='Lucia Romano', role='Chef and owner', addr='14 Tremont St, Boston, MA 02108'),
+    head=['Cooked over fire,', 'served with *care.*'], sub='A short menu that changes every week with what our farmers bring, cooked over wood and served at long tables.', statement='We cook what’s good this week, over fire, for people who like to linger.')
+
+tpl(id='corner', pin=[766, 42, 1060, 63, 192], name='Little Corner', cat='cafe', moods=['warm', 'dark'], pal='espresso-crema', font='gambarino-general',
+    nav='bar', hero='menu', secs=['about', 'gallery', 'reviews', 'visit'], foot='big', r=10, btn='pill', img='warm', act='Find us',
+    biz=dict(name='Little Corner Coffee', short='Little Corner', city='Amsterdam', area=['De Pijp', 'Jordaan', 'Oud-West', 'Oost', 'Noord', 'Westerpark'], phone='+31 20 555 0193', since=2016, owner='Noor Jansen', addr='Gerard Doustraat 41, Amsterdam', cur='€', uk=True),
+    head=['Slow coffee', 'on a fast street.'], sub='Roasted in the back room, poured at the front. Pastries from 7am, Wi-Fi all day.')
+
+tpl(id='proof', name='Proof', cat='bakery', moods=['warm', 'playful'], pal='terracotta-cream', font='erode-sharp',
+    nav='center', hero='inline', secs=['menu', 'process', 'about:flip', 'reviews', 'visit'], foot='cols', r=12, btn='pill', img='warm',
+    biz=dict(name='Proof Bakehouse', short='Proof', city='London', area=['Hackney', 'Dalston', 'Islington', 'Stoke Newington', 'Clapton', 'Bethnal Green'], phone='020 7946 0321', since=2014, owner='Hattie Clarke', addr='12 Broadway Market, London E8', cur='£', uk=True),
+    head=['Bread [] worth', 'getting up [] for.'], sub='Long-fermented sourdough and hand-laminated pastries, baked every morning from 3am. Order by 4pm for tomorrow.')
+
+tpl(id='velvet', pin=[195], name='Velvet Room', cat='bar', moods=['dark', 'luxe'], pal='midnight-brass', font='bodoni-jost',
+    nav='center', hero='cover', secs=['menu', 'statement', 'gallery', 'book', 'visit'], foot='big', r=0, btn='sq', img='warm',
+    biz=dict(name='The Velvet Room', short='Velvet Room', city='New Orleans', area=['French Quarter', 'Marigny', 'Garden District', 'Bywater', 'Treme', 'Uptown'], phone='(504) 555-0116', since=2017, owner='Jules Thibodeaux', addr='620 Frenchmen St, New Orleans, LA 70116'),
+    head=['Low lights,', 'good company.'], sub='Seasonal cocktails, small plates till midnight and jazz on Thursdays.', statement='A bar you can actually talk in: low lights, great drinks and staff who remember your name.')
+
+tpl(id='maison', name='Maison Rose', cat='salon', moods=['luxe', 'warm'], pal='blush-salon', font='boska-italic',
+    nav='center', hero='collage', secs=['services', 'team', 'quote', 'book', 'visit'], foot='cols', r=0, btn='pill', img='soft',
+    biz=dict(name='Maison Rose Hair', short='Maison Rose', city='Paris', area=['Le Marais', 'Saint-Germain', 'Montmartre', 'Bastille', 'Batignolles'], phone='+33 1 55 50 21 08', since=2011, owner='Camille Laurent', addr='18 rue de Turenne, 75004 Paris', cur='€', uk=True),
+    head=['Hair that', 'feels like *you.*'], sub='Unhurried cuts, soft colour and real consultations in a quiet salon in the Marais.')
+
+tpl(id='sharp', name='Sharp & Sons', cat='barber', moods=['classic', 'bold'], pal='barber-stripe', font='rokkitt-literata',
+    nav='bar', hero='menu', secs=['about', 'gallery', 'book', 'reviews', 'visit'], foot='big', r=0, btn='sq', img='mono',
+    biz=dict(name='Sharp & Sons Barbers', short='Sharp & Sons', city='Manchester', area=['Northern Quarter', 'Ancoats', 'Didsbury', 'Chorlton', 'Salford'], phone='0161 496 0482', since=2008, owner='Callum Reid', addr='22 Oldham St, Manchester M1', cur='£', uk=True),
+    head=['Sharp cuts.', 'Hot towels.'], sub='Five chairs, straight razors and time for a proper conversation. Walk in or book your barber.')
+
+tpl(id='stillwater', name='Still Water', cat='spa', moods=['calm', 'luxe'], pal='linen-sage', font='sentient-light',
+    nav='center', hero='arch', secs=['statement', 'menu', 'process', 'feature', 'book', 'visit'], foot='cols', r=4, btn='pill', img='soft', motion='calm', mark='lotus', logoRound=True,
+    biz=dict(name='Still Water Spa', short='Still Water', city='Santa Barbara', area=['Montecito', 'Goleta', 'Carpinteria', 'Summerland', 'Isla Vista'], phone='(805) 555-0122', since=2010, owner='Elise Hartmann', addr='1120 State St, Santa Barbara, CA 93101'),
+    head=['An hour', 'for yourself.'], sub='Massage, facials and a thermal suite, with therapists who listen and products that are kind to skin.')
+
+tpl(id='brightside', name='Brightside', cat='dental', moods=['fresh', 'calm'], pal='clinic-teal', font='hanken-medium',
+    nav='bar', hero='split', secs=['trust', 'servicesGrid', 'team', 'quote', 'faq', 'book', 'cta'], foot='cols', r=14, btn='pill', img='soft', logoRound=True,
+    biz=dict(name='Brightside Dental', short='Brightside', city='San Diego', area=['North Park', 'La Jolla', 'Hillcrest', 'Pacific Beach', 'Mission Hills', 'Point Loma'], phone='(619) 555-0150', since=2012, owner='Hannah Cho', addr='3900 Fifth Ave, San Diego, CA 92103'),
+    lede='New patients welcome in {city}', head=['Gentle dentistry', 'for the *whole family.*'], sub='Calm, modern care with clear prices, same-day emergencies and a team that takes nervous patients seriously.')
+
+tpl(id='forge', name='Forge', cat='fitness', moods=['dark', 'bold'], pal='coral-gym', font='unbounded-onest',
+    nav='bar', hero='poster', secs=['servicesGrid', 'prices', 'stats:fld-2', 'team', 'reviews', 'cta'], foot='big', r=6, btn='soft',
+    biz=dict(name='Forge Strength Studio', short='Forge', city='Toronto', area=['Leslieville', 'The Annex', 'Liberty Village', 'Riverdale', 'Roncesvalles'], phone='(416) 555-0187', since=2016, owner='Jordan Okafor', addr='88 Queen St E, Toronto, ON'),
+    head=['Get strong.', 'Stay strong.', 'Feel *great.*'], sub='Small-group strength classes and personal training with coaches who know your name. First class free.')
+
+tpl(id='harlow', name='Harlow & Finch', cat='law', moods=['classic', 'luxe'], pal='legal-navy', font='eb-garamond',
+    nav='bar', hero='editorial', secs=['services', 'statement', 'stats:fld-1', 'team', 'quote:fld-3', 'faq', 'contact'], foot='cols', r=0, btn='sq', mark='scales',
+    biz=dict(name='Harlow & Finch Solicitors', short='Harlow & Finch', city='Edinburgh', area=['New Town', 'Leith', 'Stockbridge', 'Morningside', 'Bruntsfield'], phone='0131 496 0715', since=1987, owner='Eleanor Harlow', addr='21 Queen St, Edinburgh EH2', cur='£', uk=True),
+    head=['Clear advice,', 'when it matters most.'], sub='Family, property, wills and business law, explained in plain English, with fixed fees wherever we can.', caption='Advising Edinburgh families and businesses since {since}.')
+
+tpl(id='ledger', name='Ledger', cat='accounting', moods=['minimal', 'calm'], pal='ledger-green', font='switzer-semibold',
+    nav='bar', hero='numbers', secs=['servicesGrid', 'prices', 'process', 'quote', 'faq', 'cta'], foot='cols', r=6, btn='soft',
+    biz=dict(name='Ledger & Co. Accountants', short='Ledger & Co.', city='Dublin', area=['Ranelagh', 'Rathmines', 'Smithfield', 'Ballsbridge', 'Drumcondra'], phone='+353 1 555 0142', since=2003, owner='Aoife Brennan', addr='9 Merrion Square, Dublin 2', cur='€', uk=True),
+    head=['Numbers you can', 'actually use.'], sub='Bookkeeping, payroll, tax and year-end accounts for small businesses, on a fixed monthly fee with a named accountant.')
+
+tpl(id='keystone', pin=[946], name='Keystone', cat='realestate', moods=['calm', 'luxe'], pal='three-stones', font='imbue-albert',
+    nav='bar', hero='monument', secs=['statement', 'gallery', 'services', 'stats:fld-1', 'reviews', 'contact'], foot='big', r=0, btn='sq',
+    biz=dict(name='Keystone Estates', short='Keystone', city='Bath', area=['Larkhall', 'Widcombe', 'Lansdown', 'Bear Flat', 'Combe Down'], phone='01225 960 314', since=1996, owner='Imogen Ashby', addr='4 Milsom St, Bath BA1', cur='£', uk=True),
+    head=['Homes in Bath,', 'sold with care.'], sub='Honest valuations, beautiful photography and a team that knows every street in the city.')
+
+tpl(id='lumen', name='Lumen', cat='photography', moods=['dark', 'minimal'], pal='darkroom', font='zodiak-hanken',
+    nav='min', hero='stack', secs=['gallery', 'statement', 'prices', 'quote:fld-3', 'book', 'contact'], foot='big', r=0, btn='sq', mark='camera', galleryCount=4,
+    biz=dict(name='Lumen Photography', short='Lumen', city='Lisbon', area=['Alfama', 'Chiado', 'Príncipe Real', 'Belém', 'Cascais'], phone='+351 21 555 0174', since=2009, owner='Inês Carvalho', addr='Rua da Rosa 52, Lisboa', cur='€', uk=True),
+    head=['The moments', 'between poses.'], sub='Weddings, portraits and brand stories, photographed honestly and delivered within two weeks.')
+
+tpl(id='bloom', name='Bloom Street', cat='florist', moods=['playful', 'fresh'], pal='florist-pink', font='pilcrow-rounded',
+    nav='bar', hero='collage', secs=['services', 'menu', 'process', 'reviews', 'visit'], foot='cols', r=16, btn='pill',
+    biz=dict(name='Bloom Street Flowers', short='Bloom Street', city='Portland', area=['Pearl District', 'Alberta Arts', 'Hawthorne', 'Sellwood', 'Mississippi'], phone='(503) 555-0134', since=2013, owner='June Takahashi', addr='2335 NW Thurman St, Portland, OR 97210'),
+    head=['Flowers picked', 'this *morning.*'], sub='Seasonal bouquets from local growers, wrapped in paper and delivered the same day across Portland.')
+
+
+# ---------------------------------------------------------------- batch 2: trades and home, three more each
+# plumbing
+tpl(id='flowline', name='Flowline', cat='plumbing', moods=['bold', 'fresh'], pal='sky-field-navy', font='red-hat-black',
+    nav='util', hero='ticker', rot=['leaks.', 'clogs.', 'cold showers.', 'burst pipes.'], secs=['trust', 'servicesGrid', 'stats:fld-1', 'reviews', 'area', 'faq', 'cta'], foot='big', r=12, btn='pill',
+    biz=dict(name='Flowline Plumbing', short='Flowline', city='Houston', area=['The Heights', 'Montrose', 'Bellaire', 'Katy', 'Sugar Land', 'Pearland'], phone='(713) 555-0161', since=2010, owner='Javier Ruiz', addr='2100 Washington Ave, Houston, TX 77007'),
+    head=['We fix', '{}'], sub='Same-day plumbers across Houston with upfront prices, clean boots and a one-year warranty on every job.')
+tpl(id='brasstap', name='Brass Tap', cat='plumbing', moods=['dark', 'classic'], pal='warm-black-gold', font='besley-franklin',
+    nav='bar', hero='card', secs=['services', 'about', 'process', 'quote:fld-3', 'faq', 'contact'], foot='cols', r=0, btn='sq', img='warm',
+    biz=dict(name='Brass Tap Plumbing & Heating', short='Brass Tap', city='Leeds', area=['Headingley', 'Roundhay', 'Chapel Allerton', 'Horsforth', 'Meanwood'], phone='0113 496 0581', since=1979, owner='Graham Whitley', addr='14 Call Lane, Leeds LS1', cur='£', uk=True),
+    head=['Three generations', 'of honest plumbing.'], sub='Boilers, bathrooms and the emergencies in between, from a family firm that still answers its own phone.')
+tpl(id='clearrun', name='Clear Run', cat='plumbing', moods=['minimal', 'calm'], pal='white-link-blue', font='work-sans-light',
+    nav='min', hero='index', secs=['trust', 'process', 'reviews', 'area', 'faq', 'cta'], foot='cols', r=2, btn='sq',
+    biz=dict(name='Clear Run Plumbing', short='Clear Run', city='Rotterdam', area=['Kralingen', 'Delfshaven', 'Hillegersberg', 'Noord', 'Feijenoord'], phone='+31 10 555 0147', since=2005, owner='Pieter de Vries', addr='Witte de Withstraat 22, Rotterdam', cur='€', uk=True),
+    head=['Plumbing,', 'done quietly.'], sub='Leaks, drains and heaters handled by one calm, careful team, priced before we start.')
+# electrical
+tpl(id='brightspark', name='Bright Spark', cat='electrical', moods=['playful', 'fresh'], pal='offwhite-bottle-yellow', font='spartan-figtree',
+    nav='bar', hero='inline', secs=['servicesGrid', 'statement', 'process', 'reviews', 'faq', 'cta'], foot='big', r=14, btn='pill',
+    biz=dict(name='Bright Spark Electrical', short='Bright Spark', city='Bristol', area=['Clifton', 'Bedminster', 'Redland', 'Totterdown', 'Bishopston'], phone='0117 496 0723', since=2014, owner='Priya Shah', addr='31 Gloucester Rd, Bristol BS7', cur='£', uk=True),
+    head=['Lights [] on,', 'bills [] down.'], sub='Friendly electricians for rewires, lighting, car chargers and safety checks, with fixed prices and tidy work.')
+tpl(id='circuit', name='Circuit & Co.', cat='electrical', moods=['minimal', 'classic'], pal='stone-blueprint', font='franklin-source',
+    nav='bar', hero='numbers', secs=['services', 'about', 'process', 'quote', 'faq', 'contact'], foot='cols', r=0, btn='sq', img='mono',
+    biz=dict(name='Circuit & Co. Electricians', short='Circuit & Co.', city='Philadelphia', area=['Fishtown', 'Rittenhouse', 'Manayunk', 'Germantown', 'South Philly', 'Northern Liberties'], phone='(215) 555-0139', since=1991, owner='Walt Kaminski', addr='600 N 2nd St, Philadelphia, PA 19123'),
+    head=['Wiring you never', 'have to think about.'], sub='Panels, rewires and repairs for Philadelphia’s old houses, done to code and explained in plain English.')
+tpl(id='sunline', name='Sunline', cat='electrical', moods=['fresh', 'bold'], pal='forest-pale-lime', font='clash-grotesk',
+    nav='bar', hero='banner', secs=['trust', 'servicesGrid', 'stats:fld-2', 'process', 'reviews', 'faq', 'cta'], foot='big', r=8, btn='pill',
+    biz=dict(name='Sunline Electric', short='Sunline', city='Sacramento', area=['Midtown', 'East Sac', 'Davis', 'Roseville', 'Elk Grove', 'Folsom'], phone='(916) 555-0154', since=2015, owner='Grace Nakamura', addr='1800 J St, Sacramento, CA 95811'),
+    head=['Chargers, panels', 'and clean power.'], sub='EV chargers, panel upgrades and solar-ready wiring for Sacramento homes, with every rebate handled for you.')
+# heating and cooling
+tpl(id='hearth', name='Hearth', cat='hvac', moods=['warm', 'classic'], pal='post-red-mustard', font='zilla-slab',
+    nav='util', hero='split', secs=['trust', 'services', 'about', 'stats:fld-1', 'reviews', 'faq', 'cta'], foot='cols', r=6, btn='soft', img='warm',
+    biz=dict(name='Hearth Heating & Cooling', short='Hearth', city='Pittsburgh', area=['Shadyside', 'Lawrenceville', 'Squirrel Hill', 'Mt. Lebanon', 'Bethel Park', 'Oakmont'], phone='(412) 555-0193', since=1972, owner='Joe Petrakis', addr='3500 Butler St, Pittsburgh, PA 15201'),
+    head=['Keeping Pittsburgh', 'warm since 1972.'], sub='Furnaces, boilers and central air from a family firm that has seen every kind of Pittsburgh basement.')
+tpl(id='polar', name='Polar', cat='hvac', moods=['bold', 'playful'], pal='cobalt-field', font='panchang-switzer',
+    nav='bar', hero='poster', secs=['servicesGrid', 'prices', 'process', 'reviews', 'faq', 'cta:fld-1'], foot='big', r=4, btn='pill',
+    biz=dict(name='Polar Air Co.', short='Polar', city='Atlanta', area=['Midtown', 'Decatur', 'Buckhead', 'Sandy Springs', 'Marietta', 'Kirkwood'], phone='(404) 555-0118', since=2008, owner='Terrence Hall', addr='675 Ponce de Leon Ave, Atlanta, GA 30308'),
+    head=['Stay cool.', 'Stay warm.', 'Stay put.'], sub='AC repairs, new systems and tune-ups across Atlanta. Most fixes done on the first visit.')
+tpl(id='stillair', name='Stillair', cat='hvac', moods=['calm', 'minimal'], pal='teal-on-paper', font='archivo-regular',
+    nav='min', hero='cover', secs=['statement', 'services', 'process', 'quote', 'faq', 'contact'], foot='cols', r=0, btn='sq', img='soft', motion='calm',
+    biz=dict(name='Stillair Heat Pumps', short='Stillair', city='Helsinki', area=['Kallio', 'Töölö', 'Punavuori', 'Lauttasaari', 'Espoo'], phone='+358 9 555 0164', since=2011, owner='Aino Virtanen', addr='Fredrikinkatu 34, Helsinki', cur='€', uk=True),
+    head=['Quiet warmth', 'for long winters.'], sub='Heat pumps sized for northern homes, fitted in a day and looked after for years.')
+# roofing
+tpl(id='slateco', name='Slate & Co.', cat='roofing', moods=['classic', 'luxe'], pal='green-mat-chocolate', font='literata-book',
+    nav='center', hero='editorial', secs=['services', 'gallery', 'about', 'quote:fld-1', 'process', 'contact'], foot='cols', r=0, btn='sq', img='warm',
+    biz=dict(name='Slate & Co. Roofing', short='Slate & Co.', city='York', area=['Bishopthorpe', 'Heworth', 'Acomb', 'Fulford', 'Haxby'], phone='01904 960 238', since=1968, owner='Martin Ashworth', addr='9 Micklegate, York YO1', cur='£', uk=True),
+    head=['Heritage roofs,', 'repaired by hand.'], sub='Slate, stone and lead work for listed buildings and old homes, by roofers who learned the trade properly.', caption='Repairing York’s old roofs since {since}.')
+tpl(id='topside', name='Topside', cat='roofing', moods=['bold', 'dark'], pal='graphite-safety-orange', font='chivo-black',
+    nav='util', hero='rescue', secs=['trust', 'servicesGrid', 'stats:fld-2', 'gallery', 'reviews', 'faq', 'cta'], foot='big', r=0, btn='sq', img='mono',
+    biz=dict(name='Topside Roofing', short='Topside', city='Oklahoma City', area=['Edmond', 'Norman', 'Moore', 'Yukon', 'Midwest City', 'Nichols Hills'], phone='(405) 555-0129', since=2003, owner='Cody Barnes', addr='1 NE 2nd St, Oklahoma City, OK 73104'),
+    head=['Storm damage?', 'We’ll tarp it today.'], sub='Emergency tarping, hail repairs and insurance claims handled start to finish, across the metro.')
+tpl(id='skyward', name='Skyward', cat='roofing', moods=['fresh', 'calm'], pal='sky-sand', font='jost-caps',
+    nav='bar', hero='splitR', secs=['trust', 'services', 'process', 'gallery', 'quote', 'faq', 'cta'], foot='cols', r=14, btn='pill',
+    biz=dict(name='Skyward Roofing & Solar', short='Skyward', city='San Jose', area=['Willow Glen', 'Campbell', 'Los Gatos', 'Saratoga', 'Cupertino', 'Santa Clara'], phone='(408) 555-0175', since=2012, owner='Daniel Vu', addr='200 S 1st St, San Jose, CA 95113'),
+    head=['A roof that', 'pays you back.'], sub='New roofs built ready for solar, with free inspections and a 25-year warranty.')
+# construction
+tpl(id='plumbline', name='Plumb Line', cat='construction', moods=['minimal', 'calm'], pal='putty-black-teal', font='hanken-medium',
+    nav='min', hero='index', secs=['statement', 'gallery', 'process', 'stats:fld-1', 'quote', 'contact'], foot='big', r=0, btn='sq',
+    biz=dict(name='Plumb Line Builders', short='Plumb Line', city='Vancouver', area=['Kitsilano', 'Mount Pleasant', 'Main Street', 'North Van', 'Point Grey'], phone='(604) 555-0149', since=2006, owner='Oliver Grant', addr='1280 W Broadway, Vancouver, BC'),
+    head=['Quiet homes,', 'built carefully.'], sub='Renovations and new homes with one team, honest programmes and finishes that last.')
+tpl(id='groundwork', name='Groundwork', cat='construction', moods=['warm', 'classic'], pal='tobacco-olive', font='bebas-garamond',
+    nav='bar', hero='cover', secs=['trust', 'services', 'gallery', 'about', 'process', 'faq', 'contact'], foot='cols', r=0, btn='sq', img='warm',
+    biz=dict(name='Groundwork Construction', short='Groundwork', city='Nashville', area=['East Nashville', 'Germantown', '12 South', 'Sylvan Park', 'Franklin', 'Brentwood'], phone='(615) 555-0188', since=1995, owner='Ray Holloway', addr='400 Broadway, Nashville, TN 37203'),
+    head=['Built square,', 'built to last.'], sub='Additions, kitchens and custom homes across Middle Tennessee, on a fixed-price contract.')
+tpl(id='blockwork', name='Blockwork', cat='construction', moods=['bold', 'playful'], pal='report-blocks', font='epilogue-black',
+    nav='bar', hero='ticker', rot=['kitchens.', 'lofts.', 'extensions.', 'new homes.'], secs=['servicesGrid', 'stats:fld-1', 'process', 'gallery', 'reviews', 'contact'], foot='big', r=0, btn='sq',
+    biz=dict(name='Blockwork Builders', short='Blockwork', city='Antwerp', area=['Zurenborg', 'Berchem', 'Het Zuid', 'Eilandje', 'Deurne'], phone='+32 3 555 01 62', since=2009, owner='Lotte Peeters', addr='Leopoldstraat 12, Antwerpen', cur='€', uk=True),
+    head=['We build', '{}'], sub='Design-and-build for homes in Antwerp: one fixed price, one site manager, one weekly update.')
+# landscaping
+tpl(id='fernwood', name='Fernwood', cat='landscaping', moods=['calm', 'luxe'], pal='green-black-bone', font='newsreader-light',
+    nav='center', hero='arch', secs=['statement', 'services', 'gallery', 'process', 'quote', 'contact'], foot='cols', r=0, btn='sq', img='soft', motion='calm', mark='tree', logoRound=True,
+    biz=dict(name='Fernwood Garden Design', short='Fernwood', city='Cheltenham', area=['Montpellier', 'Leckhampton', 'Charlton Kings', 'Prestbury', 'Cirencester'], phone='01242 960 517', since=2001, owner='Harriet Pryce', addr='22 Promenade, Cheltenham GL50', cur='£', uk=True),
+    head=['Gardens with', 'a sense of place.'], sub='Garden design and planting for Cotswold homes, from a single border to the whole plot.')
+tpl(id='mowtown', name='Mow Town', cat='landscaping', moods=['playful', 'bold'], pal='mint-orange-grey', font='clash-grotesk',
+    nav='bar', hero='poster', secs=['servicesGrid', 'prices', 'book', 'reviews', 'faq', 'cta'], foot='big', r=18, btn='pill',
+    biz=dict(name='Mow Town Lawn Care', short='Mow Town', city='Kansas City', area=['Brookside', 'Waldo', 'Overland Park', 'Leawood', 'Westport', 'Lee’s Summit'], phone='(816) 555-0127', since=2017, owner='Tyler Jensen', addr='1600 Genessee St, Kansas City, MO 64102'),
+    head=['Mow.', 'Feed.', 'Repeat.'], sub='Weekly mowing, feeding and seasonal clean-ups on a schedule that suits your grass.')
+tpl(id='terra', name='Terra', cat='landscaping', moods=['warm', 'minimal'], pal='moss-sand', font='erode-sharp',
+    nav='bar', hero='stack', secs=['services', 'about:flip', 'gallery', 'process', 'reviews', 'cta'], foot='cols', r=6, btn='soft', img='warm',
+    biz=dict(name='Terra Landscapes', short='Terra', city='Santa Fe', area=['Eastside', 'Canyon Road', 'Tesuque', 'Eldorado', 'Las Campanas'], phone='(505) 555-0142', since=2004, owner='Lucia Montoya', addr='200 Canyon Rd, Santa Fe, NM 87501'),
+    head=['Water-wise gardens', 'for the high desert.'], sub='Native planting, stone and drip irrigation for gardens that thrive on very little water.')
+# cleaning
+tpl(id='spotless', name='Spotless', cat='cleaning', moods=['minimal', 'calm'], pal='white-mint-tiles', font='switzer-semibold',
+    nav='bar', hero='split', secs=['trust', 'services', 'book', 'process', 'quote', 'faq', 'cta'], foot='cols', r=10, btn='soft', img='soft',
+    biz=dict(name='Spotless & Co.', short='Spotless', city='Brighton', area=['Kemptown', 'Hove', 'Hanover', 'Preston Park', 'Seven Dials'], phone='01273 960 145', since=2016, owner='Maria Santos', addr='8 North Rd, Brighton BN1', cur='£', uk=True),
+    head=['A cleaner home,', 'every other Friday.'], sub='The same trusted cleaner every visit, eco-friendly products, and a free re-clean if anything’s missed.')
+tpl(id='gleam', name='Gleam', cat='cleaning', moods=['bold', 'playful'], pal='candy-chapters', font='red-hat-black',
+    nav='bar', hero='ticker', rot=['kitchens.', 'bathrooms.', 'offices.', 'ovens.'], secs=['servicesGrid', 'prices', 'book', 'reviews', 'faq', 'cta'], foot='big', r=20, btn='pill',
+    biz=dict(name='Gleam Cleaning Co.', short='Gleam', city='Miami', area=['Brickell', 'Wynwood', 'Coconut Grove', 'Coral Gables', 'Little Havana', 'Miami Beach'], phone='(305) 555-0166', since=2018, owner='Carla Mendes', addr='50 SW 10th St, Miami, FL 33130'),
+    head=['Sparkling', '{}'], sub='Deep cleans, regular cleans and move-outs across Miami. See your price and book in a minute.')
+tpl(id='whiteglove', name='White Glove', cat='cleaning', moods=['luxe', 'calm'], pal='lunar-grey-bronze', font='bodoni-jost',
+    nav='center', hero='card', secs=['statement', 'services', 'team', 'quote:fld-3', 'book', 'contact'], foot='cols', r=0, btn='sq', img='mono',
+    biz=dict(name='White Glove Housekeeping', short='White Glove', city='New York', area=['Upper East Side', 'Tribeca', 'West Village', 'Brooklyn Heights', 'Chelsea'], phone='(212) 555-0108', since=2007, owner='Eleanor Vance', addr='10 E 63rd St, New York, NY 10065'),
+    head=['Discreet housekeeping', 'for busy homes.'], sub='Trained, vetted housekeepers who look after your home the way you would, week after week.')
+# painting
+tpl(id='secondcoat', name='Second Coat', cat='painting', moods=['minimal', 'classic'], pal='oxblood-grey', font='besley-franklin',
+    nav='bar', hero='splitR', secs=['trust', 'services', 'gallery', 'process', 'quote', 'faq', 'cta'], foot='cols', r=0, btn='sq',
+    biz=dict(name='Second Coat Decorators', short='Second Coat', city='Oxford', area=['Jericho', 'Summertown', 'Headington', 'Cowley', 'Iffley'], phone='01865 960 382', since=1999, owner='Tom Fletcher', addr='42 Walton St, Oxford OX2', cur='£', uk=True),
+    head=['Careful painters', 'for old houses.'], sub='Lime, oil and modern paints applied with proper prep, by decorators who respect old plaster and wood.')
+tpl(id='tint', name='Tint', cat='painting', moods=['playful', 'fresh'], pal='swap-pastels', font='chillax-semibold',
+    nav='bar', hero='collage', secs=['servicesGrid', 'statement', 'process', 'reviews', 'faq', 'cta'], foot='big', r=16, btn='pill',
+    biz=dict(name='Tint Painting Co.', short='Tint', city='San Francisco', area=['Mission', 'Noe Valley', 'Richmond', 'Sunset', 'Bernal Heights', 'Potrero Hill'], phone='(415) 555-0172', since=2016, owner='Maya Lindqvist', addr='3200 24th St, San Francisco, CA 94110'),
+    head=['Color makes', 'the *room.*'], sub='Interior and exterior painting with free color advice, low-odor paints and spotless clean-up.')
+tpl(id='weatherline', name='Weatherline', cat='painting', moods=['bold', 'dark'], pal='blue-black-cornflower', font='barlow-condensed',
+    nav='bar', hero='compare', secs=['trust', 'services', 'gallery', 'stats:fld-2', 'reviews', 'faq', 'cta'], foot='big', r=4, btn='sq',
+    biz=dict(name='Weatherline Exterior Painting', short='Weatherline', city='Spokane', area=['South Hill', 'Browne’s Addition', 'Kendall Yards', 'Spokane Valley', 'Liberty Lake'], phone='(509) 555-0133', since=2002, owner='Brent Hollis', addr='900 W 1st Ave, Spokane, WA 99201'),
+    head=['Old paint,', 'new house.'], sub='Exterior painting that stands up to Spokane winters: scraped, primed and painted to last.')
+# handyman
+tpl(id='oddjobs', name='Odd Jobs', cat='handyman', moods=['playful', 'bold'], pal='mustard-field', font='epilogue-black',
+    nav='bar', hero='poster', secs=['servicesGrid', 'prices', 'book', 'reviews', 'faq', 'cta:fld-1'], foot='big', r=6, btn='soft',
+    biz=dict(name='Odd Jobs Co.', short='Odd Jobs', city='Glasgow', area=['West End', 'Southside', 'Finnieston', 'Dennistoun', 'Shawlands'], phone='0141 496 0756', since=2013, owner='Stuart McLeod', addr='120 Byres Rd, Glasgow G12', cur='£', uk=True),
+    head=['No job', 'too *small.*'], sub='Shelves, doors, flat-pack and all the small repairs, by friendly handymen with clear hourly rates.')
+tpl(id='toolbelt', pin=[210], name='Toolbelt', cat='handyman', moods=['warm', 'classic'], pal='rose-grey-green', font='zilla-slab',
+    nav='util', hero='numbers', secs=['trust', 'servicesGrid', 'process', 'quote', 'faq', 'contact'], foot='cols', r=4, btn='soft',
+    biz=dict(name='Toolbelt Home Repairs', short='Toolbelt', city='Milwaukee', area=['Bay View', 'Shorewood', 'Wauwatosa', 'Riverwest', 'Third Ward', 'Whitefish Bay'], phone='(414) 555-0151', since=2006, owner='Gary Novak', addr='200 N Water St, Milwaukee, WI 53202'),
+    head=['Small repairs,', 'done properly.'], sub='One visit for the whole list: doors, floors, fixtures and fixes, by handymen who turn up on time.')
+tpl(id='fettle', pin=[954, 276, 32], name='Fettle', cat='handyman', moods=['minimal', 'fresh'], pal='cool-grey-cobalt', font='archivo-regular',
+    nav='min', hero='index', secs=['process', 'prices', 'reviews', 'faq', 'cta'], foot='cols', r=0, btn='sq',
+    biz=dict(name='Fettle Home Services', short='Fettle', city='Cork', area=['Douglas', 'Ballincollig', 'Blackrock', 'Bishopstown', 'Glanmire'], phone='+353 21 555 0138', since=2015, owner='Ciarán Murphy', addr='18 Oliver Plunkett St, Cork', cur='€', uk=True),
+    head=['The little things,', 'fixed.'], sub='Book a handyman for an hour or a day. Clear rates, parts on the van and a 90-day guarantee.')
+# removals
+tpl(id='nestwell', name='Nestwell', cat='moving', moods=['calm', 'warm'], pal='blush-sage-slate', font='erode-sharp',
+    nav='bar', hero='split', secs=['trust', 'services', 'process', 'about', 'quote', 'faq', 'cta'], foot='cols', r=10, btn='pill',
+    biz=dict(name='Nestwell Removals', short='Nestwell', city='Cambridge', area=['Mill Road', 'Chesterton', 'Newnham', 'Trumpington', 'Histon'], phone='01223 960 471', since=1998, owner='Sarah Bell', addr='6 Regent St, Cambridge CB2', cur='£', uk=True),
+    head=['Moving house,', 'gently.'], sub='Careful packing, careful crews and one fixed price, for moves across town or across the country.')
+tpl(id='longhaul', name='Longhaul', cat='moving', moods=['bold', 'dark'], pal='black-crimson', font='big-shoulders-public',
+    nav='util', hero='cover', secs=['trust', 'services', 'stats:fld-2', 'process', 'reviews', 'faq', 'cta'], foot='big', r=0, btn='sq', img='mono',
+    biz=dict(name='Longhaul Moving Co.', short='Longhaul', city='Dallas', area=['Uptown', 'Deep Ellum', 'Oak Cliff', 'Plano', 'Frisco', 'Irving'], phone='(214) 555-0186', since=1989, owner='Wade Harmon', addr='1900 Elm St, Dallas, TX 75201'),
+    head=['Coast to coast,', 'one crew.'], sub='Long-distance moves with the same crew from your old front door to your new one.')
+tpl(id='boxwell', name='Boxwell', cat='moving', moods=['fresh', 'minimal'], pal='mint-pink-accounts', font='spartan-figtree',
+    nav='bar', hero='map', secs=['servicesGrid', 'book', 'process', 'reviews', 'faq', 'cta'], foot='cols', r=12, btn='pill',
+    biz=dict(name='Boxwell Movers', short='Boxwell', city='Barcelona', area=['Gràcia', 'Eixample', 'Poblenou', 'Sant Antoni', 'Sarrià'], phone='+34 93 555 01 29', since=2014, owner='Marta Puig', addr='Carrer de Verdi 18, Barcelona', cur='€', uk=True),
+    head=['Across town', 'by teatime.'], sub='Flat moves around Barcelona with boxes, packing and lifts handled, booked online in minutes.')
+# auto
+tpl(id='pitlane', name='Pit Lane', cat='auto', moods=['bold', 'playful'], pal='blue-red-black', font='archivo-compressed',
+    nav='bar', hero='ticker', rot=['brakes.', 'tyres.', 'servicing.', 'MOTs.'], secs=['servicesGrid', 'book', 'stats:fld-2', 'reviews', 'faq', 'cta'], foot='big', r=0, btn='sq',
+    biz=dict(name='Pit Lane Garage', short='Pit Lane', city='Birmingham', area=['Digbeth', 'Moseley', 'Harborne', 'Edgbaston', 'Kings Heath'], phone='0121 496 0815', since=2001, owner='Darren Price', addr='75 Digbeth High St, Birmingham B5', cur='£', uk=True),
+    head=['Fast, fair', '{}'], sub='Servicing and repairs with a video of every check, so you see what we see before you pay.')
+tpl(id='mirrorfinish', name='Mirror Finish', cat='auto', moods=['luxe', 'dark'], pal='charcoal-room-sage', font='unbounded-onest',
+    nav='min', hero='card', secs=['services', 'gallery', 'prices', 'book', 'quote', 'contact'], foot='big', r=0, btn='sq', img='mono', mark='sparkle',
+    biz=dict(name='Mirror Finish Detailing', short='Mirror Finish', city='Los Angeles', area=['Santa Monica', 'Silver Lake', 'Pasadena', 'Culver City', 'Venice', 'Beverly Hills'], phone='(310) 555-0163', since=2016, owner='Marco Bellini', addr='1500 Abbot Kinney Blvd, Los Angeles, CA 90291'),
+    head=['Better than', 'the showroom.'], sub='Hand washing, machine polishing and ceramic coatings, done at our studio or at your home.')
+tpl(id='hollowcreek', name='Hollow Creek', cat='auto', moods=['warm', 'classic'], pal='walnut-tan', font='rokkitt-literata',
+    nav='util', hero='splitR', secs=['trust', 'services', 'about', 'book', 'quote:fld-1', 'faq', 'cta'], foot='cols', r=0, btn='sq', img='warm',
+    biz=dict(name='Hollow Creek Garage', short='Hollow Creek', city='Asheville', area=['West Asheville', 'Montford', 'Black Mountain', 'Weaverville', 'Arden'], phone='(828) 555-0179', since=1984, owner='Earl Whitfield', addr='45 Haywood Rd, Asheville, NC 28806'),
+    head=['The garage', 'your dad trusted.'], sub='Honest servicing and repairs from a family garage that explains everything and never upsells.')
+
+
+# ---------------------------------------------------------------- batch 3: food and drink, health and beauty
+# restaurant
+tpl(id='trattoria', name='Trattoria Rosa', cat='restaurant', moods=['warm', 'playful'], pal='carmine-field', font='gambarino-general',
+    nav='center', hero='inline', secs=['menu', 'statement', 'about', 'book', 'visit'], foot='big', r=12, btn='pill', img='warm',
+    biz=dict(name='Trattoria Rosa', short='Trattoria Rosa', city='Providence', area=['Federal Hill', 'Fox Point', 'Wayland Square', 'Downcity', 'College Hill'], phone='(401) 555-0134', since=1997, owner='Rosa Bianchi', role='Chef and owner', addr='300 Atwells Ave, Providence, RI 02903'),
+    head=['Pasta [] made', 'every [] morning.'], sub='Family recipes, hand-rolled pasta and a wine list from small Italian growers, on Federal Hill since 1997.', statement='Nonna’s recipes, made fresh every morning and served at tables that are always a little too full.')
+tpl(id='kumo', name='Kumo', cat='restaurant', moods=['dark', 'minimal'], pal='soot-pale-lime', font='switzer-semibold',
+    nav='bar', hero='spotlight', secs=['menu', 'feature', 'book', 'reviews', 'visit'], foot='big', r=0, btn='sq',
+    biz=dict(name='Kumo Izakaya', short='Kumo', city='Berlin', area=['Kreuzberg', 'Mitte', 'Neukölln', 'Prenzlauer Berg', 'Friedrichshain'], phone='+49 30 555 0177', since=2015, owner='Kenji Watanabe', role='Chef and owner', addr='Oranienstraße 34, 10999 Berlin', cur='€', uk=True),
+    head=['Small plates,', 'late nights.'], sub='Grilled skewers, cold sake and a counter that stays busy until one. Walk in, or book a booth.')
+tpl(id='fieldtable', name='Field & Table', cat='restaurant', moods=['fresh', 'calm'], pal='olive-on-bone', font='literata-book',
+    nav='bar', hero='split', secs=['statement', 'menu', 'gallery', 'about', 'book', 'visit'], foot='cols', r=6, btn='soft', img='soft',
+    biz=dict(name='Field & Table', short='Field & Table', city='Burlington', area=['Old North End', 'South End', 'Winooski', 'Shelburne', 'Essex'], phone='(802) 555-0157', since=2012, owner='Hannah Pierce', role='Chef and owner', addr='110 Church St, Burlington, VT 05401'),
+    lede='Farm-to-table dining in {city}', head=['From our farm', 'to your table.'], sub='Vegetables from our own fields, meat from neighbours, and a menu that changes as the season does.')
+# café
+tpl(id='daybreak', name='Daybreak', cat='cafe', moods=['fresh', 'playful'], pal='orange-sky-lime', font='pilcrow-rounded',
+    nav='bar', hero='ticker', rot=['flat whites.', 'cardamom buns.', 'good mornings.', 'oat lattes.'], secs=['menu', 'gallery', 'visit', 'reviews'], foot='big', r=18, btn='pill', act='Find us',
+    biz=dict(name='Daybreak Coffee', short='Daybreak', city='Boulder', area=['Pearl Street', 'North Boulder', 'Chautauqua', 'Louisville', 'Lafayette'], phone='(303) 555-0191', since=2019, owner='Ellie Brooks', addr='1400 Pearl St, Boulder, CO 80302'),
+    lede='Coffee on Pearl Street since {since}', head=['Come for', '{}'], sub='Single-origin coffee, pastries baked at dawn and a sunny patio that fills up fast.')
+tpl(id='northbound', name='Northbound', cat='cafe', moods=['minimal', 'calm'], pal='studio-grey', font='work-sans-light',
+    nav='min', hero='monument', secs=['statement', 'menu', 'about', 'gallery', 'visit'], foot='cols', r=0, btn='sq', img='mono', act='Find us',
+    biz=dict(name='Northbound Roasters', short='Northbound', city='Vienna', area=['Neubau', 'Josefstadt', 'Leopoldstadt', 'Wieden', 'Mariahilf'], phone='+43 1 555 0148', since=2013, owner='Lena Gruber', addr='Neubaugasse 21, 1070 Wien', cur='€', uk=True),
+    head=['Light roasts,', 'quiet rooms.'], sub='A roastery café with long tables, slow filters and no music before ten.')
+tpl(id='copperkettle', name='Copper Kettle', cat='cafe', moods=['classic', 'warm'], pal='cobalt-on-sand', font='young-source',
+    nav='center', hero='arch', secs=['menu', 'about', 'reviews', 'visit'], foot='cols', r=8, btn='pill', img='warm', act='Find us', logoRound=True,
+    biz=dict(name='The Copper Kettle', short='Copper Kettle', city='Harrogate', area=['Montpellier Quarter', 'Starbeck', 'Knaresborough', 'Pannal', 'Bilton'], phone='01423 960 274', since=1986, owner='Margaret Ellis', addr='3 Montpellier Parade, Harrogate HG1', cur='£', uk=True),
+    head=['Tea, cake', 'and a proper chat.'], sub='Loose-leaf tea, scones from the oven and the best window seat in Harrogate.')
+# bakery
+tpl(id='crumb', name='Crumb', cat='bakery', moods=['minimal', 'fresh'], pal='white-signal-red', font='schibsted-heavy',
+    nav='bar', hero='splitR', secs=['menu', 'process', 'gallery', 'reviews', 'visit'], foot='big', r=4, btn='soft',
+    biz=dict(name='Crumb Bakery', short='Crumb', city='Montreal', area=['Plateau', 'Mile End', 'Outremont', 'Verdun', 'Griffintown'], phone='(514) 555-0124', since=2015, owner='Élodie Tremblay', addr='5300 Boul. Saint-Laurent, Montréal'),
+    lede='Baking in Mile End since {since}', head=['Butter, flour', 'and patience.'], sub='Croissants laminated over three days and sourdough that rests for two. Pre-order and skip the queue.')
+tpl(id='oldmill', name='Old Mill', cat='bakery', moods=['classic', 'warm'], pal='green-mat-chocolate', font='bebas-garamond',
+    nav='util', hero='editorial', secs=['statement', 'menu', 'process', 'about', 'visit'], foot='cols', r=0, btn='sq', img='warm',
+    biz=dict(name='Old Mill Bakehouse', short='Old Mill', city='Lancaster', area=['Lititz', 'Strasburg', 'Ephrata', 'Manheim', 'Millersville'], phone='(717) 555-0146', since=1951, owner='Ruth Zimmerman', addr='24 N Queen St, Lancaster, PA 17603'),
+    head=['The same bread,', 'since 1951.'], sub='Rye, potato rolls and shoofly pie from a stone oven that has barely cooled in seventy years.', caption='Baking in Lancaster since {since}.')
+tpl(id='sugarloaf', name='Sugarloaf', cat='bakery', moods=['playful', 'luxe'], pal='burgundy-bubblegum', font='boska-italic',
+    nav='center', hero='collage', secs=['services', 'gallery', 'process', 'quote', 'contact'], foot='big', r=20, btn='pill', act='Order a cake',
+    biz=dict(name='Sugarloaf Cakes', short='Sugarloaf', city='Charleston', area=['French Quarter', 'Mount Pleasant', 'West Ashley', 'Daniel Island', 'James Island'], phone='(843) 555-0117', since=2016, owner='Savannah Reed', addr='82 Queen St, Charleston, SC 29401'),
+    head=['Cakes for', 'the big *days.*'], sub='Wedding cakes, birthday cakes and everything in between, designed with you and baked to order.')
+# bar
+tpl(id='nightowl', name='Night Owl', cat='bar', moods=['playful', 'bold'], pal='candy-on-black', font='panchang-switzer',
+    nav='bar', hero='poster', secs=['menu', 'statement', 'gallery', 'book', 'visit'], foot='big', r=10, btn='pill',
+    biz=dict(name='Night Owl Bar', short='Night Owl', city='Athens', area=['Psyrri', 'Exarchia', 'Koukaki', 'Kolonaki', 'Pangrati'], phone='+30 21 0555 0136', since=2018, owner='Nikos Papadakis', addr='Agias Eirinis 7, Athina', cur='€', uk=True),
+    head=['Late nights.', 'Loud tunes.', 'Good drinks.'], sub='Cocktails, vinyl and a rooftop that comes alive after eleven.')
+tpl(id='taproom', name='Tap Room', cat='bar', moods=['warm', 'classic'], pal='bottle-green-gold', font='besley-franklin',
+    nav='util', hero='menu', secs=['about', 'gallery', 'book', 'reviews', 'visit'], foot='cols', r=0, btn='sq', img='warm',
+    biz=dict(name='The Tap Room', short='Tap Room', city='Bend', area=['Old Bend', 'Westside', 'NorthWest Crossing', 'Redmond', 'Sisters'], phone='(541) 555-0198', since=2011, owner='Hank Morrison', addr='900 NW Wall St, Bend, OR 97703'),
+    head=['Twelve taps,', 'one long table.'], sub='Local beer, a fire pit and food from the kitchen until late. Dogs welcome on the patio.')
+tpl(id='vinea', name='Vinea', cat='bar', moods=['luxe', 'calm'], pal='blush-aubergine', font='eb-garamond',
+    nav='center', hero='banner', secs=['statement', 'menu', 'team', 'book', 'visit'], foot='cols', r=0, btn='sq', img='warm', motion='calm',
+    biz=dict(name='Vinea Wine Bar', short='Vinea', city='Lyon', area=['Croix-Rousse', 'Presqu’île', 'Vieux Lyon', 'Confluence', 'Brotteaux'], phone='+33 4 55 50 31 72', since=2012, owner='Julien Moreau', addr='14 rue Mercière, 69002 Lyon', cur='€', uk=True),
+    head=['Small producers,', 'by the glass.'], sub='Natural and classic wines from growers we know, with cheese, charcuterie and good company.')
+# hair salon
+tpl(id='fringe', name='Fringe', cat='salon', moods=['bold', 'playful'], pal='pink-field-lime', font='cabinet-grotesk',
+    nav='bar', hero='ticker', rot=['cuts.', 'colour.', 'curls.', 'confidence.'], secs=['services', 'team', 'gallery', 'book', 'visit'], foot='big', r=14, btn='pill',
+    biz=dict(name='Fringe Hair Studio', short='Fringe', city='Liverpool', area=['Baltic Triangle', 'Ropewalks', 'Lark Lane', 'Allerton', 'Crosby'], phone='0151 496 0293', since=2015, owner='Jade Morgan', addr='41 Bold St, Liverpool L1', cur='£', uk=True),
+    head=['Fresh', '{}'], sub='Bold colour, sharp cuts and stylists who actually listen, on Bold Street.')
+tpl(id='lune', name='Lune', cat='salon', moods=['minimal', 'calm'], pal='rose-grey-green', font='albert-sans-semibold',
+    nav='min', hero='splitR', secs=['menu', 'team', 'quote', 'book', 'visit'], foot='cols', r=0, btn='sq', img='soft',
+    biz=dict(name='Lune Salon', short='Lune', city='Munich', area=['Schwabing', 'Glockenbachviertel', 'Haidhausen', 'Maxvorstadt', 'Au'], phone='+49 89 555 0164', since=2017, owner='Sophie Becker', addr='Hans-Sachs-Straße 9, 80469 München', cur='€', uk=True),
+    lede='A quiet salon in {city}', head=['Quiet salon,', 'honest colour.'], sub='Unhurried appointments, low-tox colour and advice you can trust.')
+tpl(id='coilcrown', name='Coil & Crown', cat='salon', moods=['warm', 'luxe'], pal='tobacco-olive', font='gambarino-general',
+    nav='center', hero='cover', secs=['services', 'statement', 'team', 'reviews', 'book', 'visit'], foot='big', r=6, btn='pill', img='warm',
+    biz=dict(name='Coil & Crown', short='Coil & Crown', city='Washington', area=['Shaw', 'Capitol Hill', 'Adams Morgan', 'Petworth', 'Navy Yard'], phone='(202) 555-0171', since=2013, owner='Imani Brooks', addr='1700 7th St NW, Washington, DC 20001'),
+    head=['Curls, coils', 'and *crowns.*'], sub='Textured hair specialists for cuts, colour, silk presses and protective styles.')
+# barber
+tpl(id='fadehouse', name='Fadehouse', cat='barber', moods=['dark', 'bold'], pal='charcoal-primaries', font='anton-work',
+    nav='bar', hero='spotlight', secs=['menu', 'gallery', 'book', 'reviews', 'visit'], foot='big', r=0, btn='sq', img='mono',
+    biz=dict(name='Fadehouse Barbers', short='Fadehouse', city='Chicago', area=['Pilsen', 'Logan Square', 'Bronzeville', 'Wicker Park', 'Hyde Park'], phone='(773) 555-0119', since=2012, owner='Andre Jackson', addr='1800 S Blue Island Ave, Chicago, IL 60608'),
+    head=['Clean fades,', 'no waiting.'], sub='Six chairs, online booking and barbers who take their time with every cut.')
+tpl(id='albion', name='Albion', cat='barber', moods=['classic', 'luxe'], pal='bottle-green-gold', font='imbue-albert',
+    nav='center', hero='editorial', secs=['statement', 'menu', 'about', 'book', 'visit'], foot='cols', r=0, btn='sq', img='warm',
+    biz=dict(name='Albion Barbers', short='Albion', city='London', area=['Mayfair', 'Soho', 'Marylebone', 'Covent Garden', 'Shoreditch'], phone='020 7946 0718', since=1962, owner='Arthur Penrose', addr='12 Jermyn St, London SW1', cur='£', uk=True),
+    head=['A proper shave,', 'since 1962.'], sub='Hot towels, straight razors and traditional cuts on Jermyn Street.', caption='On Jermyn Street since {since}.')
+tpl(id='buzz', name='Buzz & Co.', cat='barber', moods=['playful', 'fresh'], pal='sky-sand', font='chillax-semibold',
+    nav='bar', hero='split', secs=['menu', 'book', 'team', 'reviews', 'visit'], foot='big', r=16, btn='pill',
+    biz=dict(name='Buzz & Co. Barbers', short='Buzz & Co.', city='Salt Lake City', area=['Sugar House', '9th and 9th', 'The Avenues', 'Millcreek', 'Holladay'], phone='(801) 555-0162', since=2018, owner='Danny Pratt', addr='2100 S Highland Dr, Salt Lake City, UT 84106'),
+    lede='Family barbers in Sugar House', head=['Cuts for kids,', 'dads and *everyone.*'], sub='Patient barbers, a play corner and online booking, so Saturday haircuts stop being a fight.')
+# spa
+tpl(id='bathhouse', name='Bathhouse', cat='spa', moods=['dark', 'luxe'], pal='green-black-bone', font='sentient-light',
+    nav='center', hero='card', secs=['statement', 'menu', 'feature', 'book', 'visit'], foot='big', r=0, btn='sq', img='warm', motion='calm',
+    biz=dict(name='The Bathhouse', short='Bathhouse', city='Tallinn', area=['Kalamaja', 'Old Town', 'Kadriorg', 'Rotermann', 'Pirita'], phone='+372 555 0183', since=2014, owner='Liis Tamm', addr='Telliskivi 60, Tallinn', cur='€', uk=True),
+    head=['Heat, steam', 'and stillness.'], sub='Saunas, cold plunges and massage in an old factory by the sea.')
+tpl(id='glow', name='Glow', cat='spa', moods=['fresh', 'playful'], pal='navy-pink', font='bricolage-contrast',
+    nav='bar', hero='inline', secs=['servicesGrid', 'menu', 'process', 'quote', 'book', 'visit'], foot='big', r=20, btn='pill', mark='sparkle',
+    biz=dict(name='Glow Skin Studio', short='Glow', city='Raleigh', area=['Five Points', 'Oakwood', 'Cameron Village', 'Durham', 'Cary'], phone='(919) 555-0135', since=2019, owner='Bianca Torres', addr='400 Glenwood Ave, Raleigh, NC 27603'),
+    head=['Good [] skin', 'starts *here.*'], sub='Facials and skin treatments that suit your skin, with products that are kind to it.')
+tpl(id='knead', name='Knead', cat='spa', moods=['warm', 'minimal'], pal='three-stones', font='work-sans-light',
+    nav='min', hero='stack', secs=['services', 'process', 'about', 'book', 'faq', 'contact'], foot='cols', r=6, btn='soft', img='soft',
+    biz=dict(name='Knead Massage Therapy', short='Knead', city='Madison', area=['Willy Street', 'Monona', 'Middleton', 'Fitchburg', 'Near West'], phone='(608) 555-0128', since=2010, owner='Sara Lindgren', addr='1000 Williamson St, Madison, WI 53703'),
+    head=['Massage that', 'actually helps.'], sub='Licensed therapists for deep tissue, sports and pregnancy massage, booked online in a minute.')
+# dental
+tpl(id='northpoint', name='Northpoint', cat='dental', moods=['minimal', 'classic'], pal='white-link-blue', font='franklin-source',
+    nav='util', hero='numbers', secs=['trust', 'services', 'team', 'quote', 'faq', 'book', 'contact'], foot='cols', r=6, btn='soft',
+    biz=dict(name='Northpoint Dental Care', short='Northpoint', city='Ann Arbor', area=['Kerrytown', 'Burns Park', 'Ypsilanti', 'Saline', 'Dexter'], phone='(734) 555-0144', since=1993, owner='Michael Stein', addr='300 S State St, Ann Arbor, MI 48104'),
+    head=['Dentistry,', 'explained clearly.'], sub='Check-ups, implants and aligners with clear prices and no pressure, in the heart of Ann Arbor.')
+tpl(id='kindred', name='Kindred', cat='dental', moods=['warm', 'calm'], pal='blush-sage-slate', font='pilcrow-rounded',
+    nav='bar', hero='arch', secs=['trust', 'servicesGrid', 'team', 'reviews', 'faq', 'book'], foot='cols', r=18, btn='pill', img='soft', logoRound=True,
+    biz=dict(name='Kindred Family Dental', short='Kindred', city='Boise', area=['North End', 'East End', 'Meridian', 'Eagle', 'Garden City'], phone='(208) 555-0155', since=2014, owner='Rachel Kim', addr='800 W Main St, Boise, ID 83702'),
+    head=['Dentistry for', 'nervous smiles.'], sub='Gentle care for the whole family, with weighted blankets, headphones and all the time you need.')
+tpl(id='dente', name='Studio Dente', cat='dental', moods=['luxe', 'minimal'], pal='lunar-grey-bronze', font='zodiak-hanken',
+    nav='center', hero='index', secs=['statement', 'services', 'team', 'quote', 'book', 'contact'], foot='big', r=0, btn='sq', img='mono',
+    biz=dict(name='Studio Dente', short='Studio Dente', city='Milan', area=['Brera', 'Navigli', 'Isola', 'Porta Romana', 'Città Studi'], phone='+39 02 5550 1863', since=2008, owner='Giulia Ferrari', addr='Via Solferino 12, Milano', cur='€', uk=True),
+    head=['Cosmetic dentistry,', 'quietly done.'], sub='Whitening, aligners and implants in a calm studio in Brera, with every option explained first.')
+# fitness
+tpl(id='flowyoga', pin=[1051], name='Flow', cat='fitness', moods=['calm', 'fresh'], pal='teal-on-paper', font='newsreader-light',
+    nav='center', hero='monument', secs=['services', 'prices', 'team', 'quote', 'book', 'visit'], foot='cols', r=20, btn='pill', img='soft', motion='calm', mark='lotus', logoRound=True,
+    biz=dict(name='Flow Yoga Studio', short='Flow', city='Galway', area=['Salthill', 'Claddagh', 'Knocknacarra', 'Oranmore', 'Barna'], phone='+353 91 555 0147', since=2016, owner='Niamh Kelly', addr='12 Quay St, Galway', cur='€', uk=True),
+    head=['Breathe in.', 'Slow down.'], sub='Yoga and mobility classes for every body, in a bright studio by the bay. First class free.')
+tpl(id='pulse', name='Pulse', cat='fitness', moods=['bold', 'playful'], pal='ultramarine-yellow', font='jost-caps',
+    nav='bar', hero='ticker', rot=['ride.', 'sweat.', 'smile.', 'repeat.'], secs=['servicesGrid', 'prices', 'stats:fld-2', 'book', 'reviews', 'cta'], foot='big', r=12, btn='pill',
+    biz=dict(name='Pulse Cycle Studio', short='Pulse', city='Scottsdale', area=['Old Town', 'Arcadia', 'Paradise Valley', 'Tempe', 'Fountain Hills'], phone='(480) 555-0122', since=2018, owner='Kayla Morgan', addr='7000 E Camelback Rd, Scottsdale, AZ 85251'),
+    head=['Clip in.', 'Then {}'], sub='Forty-five minutes, big music and coaches who push just enough. Your first ride is free.')
+tpl(id='ironworks', name='Iron Works', cat='fitness', moods=['classic', 'dark'], pal='graphite-safety-orange', font='big-shoulders-public',
+    nav='util', hero='banner', secs=['servicesGrid', 'prices', 'team', 'stats:fld-2', 'reviews', 'cta'], foot='big', r=0, btn='sq', img='mono',
+    biz=dict(name='Iron Works Gym', short='Iron Works', city='Cleveland', area=['Tremont', 'Ohio City', 'Lakewood', 'Shaker Heights', 'Detroit-Shoreway'], phone='(216) 555-0137', since=1999, owner='Mike Kovac', addr='2400 Professor Ave, Cleveland, OH 44113'),
+    head=['Lift heavy.', 'Train smart.'], sub='Barbells, coaches and a community that shows up at 6am. No mirrors, no egos.')
+
+
+# ---------------------------------------------------------------- batch 4: professional, shops and creative
+# law
+tpl(id='mercer', name='Mercer Law', cat='law', moods=['minimal', 'calm'], pal='cool-white-slate', font='switzer-semibold',
+    nav='bar', hero='splitR', secs=['trust', 'services', 'team', 'process', 'quote', 'faq', 'contact'], foot='cols', r=4, btn='soft',
+    biz=dict(name='Mercer Family Law', short='Mercer Law', city='Richmond', area=['The Fan', 'Church Hill', 'Museum District', 'Henrico', 'Chesterfield'], phone='(804) 555-0167', since=2005, owner='Catherine Mercer', addr='901 E Byrd St, Richmond, VA 23219'),
+    lede='Family lawyers in {city}', head=['Family law,', 'handled with *care.*'], sub='Divorce, custody and separation, with calm advice, clear fees and a lawyer who returns your calls.')
+tpl(id='stonereyes', name='Stone & Reyes', cat='law', moods=['bold', 'dark'], pal='blue-black-cornflower', font='chivo-black',
+    nav='util', hero='numbers', secs=['services', 'stats:fld-2', 'team', 'reviews', 'faq', 'contact'], foot='big', r=0, btn='sq', img='mono',
+    biz=dict(name='Stone & Reyes LLP', short='Stone & Reyes', city='San Antonio', area=['Alamo Heights', 'Southtown', 'Stone Oak', 'Pearl', 'Monte Vista'], phone='(210) 555-0189', since=2002, owner='Daniel Reyes', addr='300 Convent St, San Antonio, TX 78205'),
+    head=['Injured?', 'We fight for you.'], sub='Personal injury and employment lawyers who take on the big companies, and only get paid when you do.')
+tpl(id='vandijk', name='Van Dijk & Berg', cat='law', moods=['minimal', 'classic'], pal='paper-grey-brass', font='literata-book',
+    nav='min', hero='banner', secs=['services', 'statement', 'team', 'quote:fld-1', 'contact'], foot='cols', r=0, btn='sq', img='mono',
+    biz=dict(name='Van Dijk & Berg Advocaten', short='Van Dijk & Berg', city='The Hague', area=['Statenkwartier', 'Scheveningen', 'Centrum', 'Benoordenhout', 'Delft'], phone='+31 70 555 0193', since=1994, owner='Anna van Dijk', addr='Lange Voorhout 18, Den Haag', cur='€', uk=True),
+    head=['Business law', 'for growing companies.'], sub='Contracts, employment and disputes for Dutch and international businesses, in plain language.')
+# accounting
+tpl(id='tally', pin=[175], name='Tally', cat='accounting', moods=['playful', 'fresh'], pal='mint-pink-accounts', font='spartan-figtree',
+    nav='bar', hero='ticker', rot=['bookkeeping.', 'payroll.', 'tax returns.', 'year-end.'], secs=['servicesGrid', 'prices', 'process', 'reviews', 'faq', 'cta'], foot='big', r=14, btn='pill',
+    biz=dict(name='Tally Accounting', short='Tally', city='Oakland', area=['Temescal', 'Rockridge', 'Lake Merritt', 'Uptown', 'Fruitvale', 'Berkeley'], phone='(510) 555-0141', since=2017, owner='Nina Okafor', addr='4900 Telegraph Ave, Oakland, CA 94609'),
+    lede='Accountants for small businesses in {city}', head=['We do your', '{}'], sub='Friendly accountants on a fixed monthly fee, so you can get back to running your business.')
+tpl(id='hawthorne', name='Hawthorne & Co.', cat='accounting', moods=['classic', 'calm'], pal='olive-on-bone', font='eb-garamond',
+    nav='center', hero='editorial', secs=['services', 'prices', 'team', 'quote', 'faq', 'contact'], foot='cols', r=0, btn='sq',
+    biz=dict(name='Hawthorne & Co. Chartered Accountants', short='Hawthorne & Co.', city='Chester', area=['Hoole', 'Handbridge', 'Upton', 'Boughton', 'Saltney'], phone='01244 960 362', since=1958, owner='James Hawthorne', addr='17 Eastgate St, Chester CH1', cur='£', uk=True),
+    head=['Steady advice,', 'for three generations.'], sub='Accounts, tax and payroll for Cheshire families and businesses, from the same office on Eastgate Street.', caption='On Eastgate Street since {since}.')
+tpl(id='figure', name='Figure', cat='accounting', moods=['bold', 'minimal'], pal='cool-grey-cobalt', font='schibsted-heavy',
+    nav='bar', hero='poster', secs=['services', 'prices', 'stats:fld-2', 'process', 'reviews', 'cta'], foot='big', r=0, btn='sq',
+    biz=dict(name='Figure Accountants', short='Figure', city='Newcastle', area=['Jesmond', 'Heaton', 'Gosforth', 'Ouseburn', 'Tynemouth'], phone='0191 496 0427', since=2012, owner='Laura Dunn', addr='25 Grey St, Newcastle NE1', cur='£', uk=True),
+    head=['Numbers,', '*sorted.*'], sub='Cloud bookkeeping, tax and payroll for start-ups and small companies, on one fixed monthly fee.')
+# real estate
+tpl(id='harbor', name='Harbor', cat='realestate', moods=['fresh', 'calm'], pal='white-navy-tab', font='albert-sans-semibold',
+    nav='bar', hero='map', secs=['gallery', 'services', 'stats:fld-1', 'reviews', 'faq', 'contact'], foot='cols', r=10, btn='pill',
+    biz=dict(name='Harbor Realty', short='Harbor', city='Annapolis', area=['Eastport', 'Downtown', 'West Annapolis', 'Severna Park', 'Edgewater'], phone='(410) 555-0153', since=2000, owner='Megan Walsh', addr='100 Main St, Annapolis, MD 21401'),
+    lede='Real estate around {city}', head=['Homes by', 'the water.'], sub='Buying and selling waterfront homes around Annapolis, with agents who know every creek and cove.')
+tpl(id='loftlane', name='Loft & Lane', cat='realestate', moods=['bold', 'minimal'], pal='putty-black-teal', font='archivo-compressed',
+    nav='min', hero='cover', secs=['gallery', 'statement', 'services', 'quote', 'contact'], foot='big', r=0, btn='sq', img='mono',
+    biz=dict(name='Loft & Lane Property', short='Loft & Lane', city='Hamburg', area=['St. Pauli', 'Ottensen', 'Eimsbüttel', 'HafenCity', 'Winterhude'], phone='+49 40 555 0129', since=2010, owner='Jonas Weber', addr='Große Elbstraße 14, Hamburg', cur='€', uk=True),
+    head=['City flats,', 'sold straight.'], sub='Honest valuations and sharp marketing for apartments across Hamburg.')
+tpl(id='wideacre', name='Wide Acre', cat='realestate', moods=['warm', 'classic'], pal='moss-sand', font='young-source',
+    nav='center', hero='card', secs=['gallery', 'about', 'services', 'reviews', 'contact'], foot='cols', r=6, btn='soft', img='warm',
+    biz=dict(name='Wide Acre Land & Homes', short='Wide Acre', city='Bozeman', area=['Gallatin Valley', 'Big Sky', 'Belgrade', 'Livingston', 'Four Corners'], phone='(406) 555-0176', since=1985, owner='Clint Harper', addr='20 E Main St, Bozeman, MT 59715'),
+    lede='Land and homes around {city}', head=['Land, ranches', 'and room to *breathe.*'], sub='Ranches, acreage and mountain homes across southwest Montana, sold by people who live here.')
+# photography
+tpl(id='goldenhour', name='Golden Hour', cat='photography', moods=['warm', 'luxe'], pal='walnut-tan', font='bodoni-jost',
+    nav='center', hero='collage', secs=['gallery', 'statement', 'prices', 'quote', 'book', 'contact'], foot='big', r=0, btn='sq', img='warm', galleryCount=4,
+    biz=dict(name='Golden Hour Weddings', short='Golden Hour', city='Napa', area=['Sonoma', 'Yountville', 'St Helena', 'Healdsburg', 'Calistoga'], phone='(707) 555-0114', since=2011, owner='Clara Whitman', addr='1300 1st St, Napa, CA 94559'),
+    head=['Love stories,', 'told in *light.*'], sub='Wedding photography across wine country: unposed, warm and delivered within two weeks.')
+tpl(id='frame', name='Frame', cat='photography', moods=['bold', 'minimal'], pal='report-blocks', font='epilogue-black',
+    nav='bar', hero='index', secs=['gallery', 'prices', 'process', 'reviews', 'book', 'contact'], foot='big', r=0, btn='sq',
+    biz=dict(name='Frame Studio', short='Frame', city='Eindhoven', area=['Strijp-S', 'Woensel', 'Stratum', 'Gestel', 'Veldhoven'], phone='+31 40 555 0172', since=2014, owner='Sanne Bakker', addr='Torenallee 22, Eindhoven', cur='€', uk=True),
+    head=['Pictures that', 'sell things.'], sub='Product and brand photography for online shops and design companies, shot in our daylight studio.')
+tpl(id='littlelights', name='Little Lights', cat='photography', moods=['playful', 'fresh'], pal='card-pastels', font='pilcrow-rounded',
+    nav='bar', hero='split', secs=['gallery', 'prices', 'process', 'quote', 'book'], foot='cols', r=18, btn='pill', img='soft',
+    biz=dict(name='Little Lights Photography', short='Little Lights', city='Des Moines', area=['East Village', 'Sherman Hill', 'Beaverdale', 'West Des Moines', 'Ankeny'], phone='(515) 555-0125', since=2015, owner='Abby Larson', addr='400 E Locust St, Des Moines, IA 50309'),
+    lede='Family photographer in {city}', head=['Family photos', 'that feel like *you.*'], sub='Relaxed outdoor sessions for families, newborns and the dog, with no stiff poses.')
+# florist
+tpl(id='wildstem', name='Wild Stem', cat='florist', moods=['dark', 'luxe'], pal='plum-black-pink', font='boska-italic',
+    nav='center', hero='spotlight', secs=['services', 'menu', 'gallery', 'process', 'visit'], foot='big', r=0, btn='sq',
+    biz=dict(name='Wild Stem Florist', short='Wild Stem', city='Savannah', area=['Starland', 'Ardsley Park', 'Thomas Square', 'Tybee', 'Midtown'], phone='(912) 555-0168', since=2016, owner='Odette Laurent', addr='2400 Bull St, Savannah, GA 31401'),
+    head=['Moody flowers', 'for big *moments.*'], sub='Lush, dark and seasonal arrangements for weddings, dinners and the days that need them.')
+tpl(id='petalpost', name='Petal Post', cat='florist', moods=['fresh', 'minimal'], pal='rose-grey-green', font='clash-grotesk',
+    nav='bar', hero='ticker', rot=['Mondays.', 'birthdays.', 'no reason.', 'the office.'], secs=['services', 'menu', 'process', 'reviews', 'faq', 'cta'], foot='big', r=12, btn='pill',
+    biz=dict(name='Petal Post', short='Petal Post', city='London', area=['Islington', 'Clapham', 'Hackney', 'Peckham', 'Notting Hill'], phone='020 7946 0592', since=2018, owner='Freya Holt', addr='22 Exmouth Market, London EC1', cur='£', uk=True),
+    lede='Flower subscriptions across {city}', head=['Fresh flowers', 'for {}'], sub='Seasonal bunches by post or bike courier, weekly, fortnightly or just because.')
+tpl(id='meadowsweet', name='Meadowsweet', cat='florist', moods=['classic', 'warm'], pal='olive-on-bone', font='literata-book',
+    nav='center', hero='editorial', secs=['statement', 'services', 'gallery', 'about', 'visit'], foot='cols', r=0, btn='sq', img='warm',
+    biz=dict(name='Meadowsweet Flowers', short='Meadowsweet', city='Ghent', area=['Patershol', 'Gent-Zuid', 'Ledeberg', 'Sint-Amandsberg', 'Mariakerke'], phone='+32 9 555 01 47', since=2004, owner='Hanne Claes', addr='Kraanlei 9, Gent', cur='€', uk=True),
+    head=['Country flowers', 'in the city.'], sub='Garden roses, wild grasses and branches from local growers, arranged loosely, the way they grow.', caption='Arranging flowers in Ghent since {since}.')
+
+
+# ---------------------------------------------------------------- checks and photos
+def need(t):
+    h = HEROES[t['hero']]
+    if h is None:
+        h = sum(l.count('[]') for l in t['head'])
+    n = h
+    for s in t['secs']:
+        name = s.split(':')[0]
+        n += (t.get('galleryCount', 3) if name == 'gallery' else SECTIONS[name])
+    return n
+
+errors, ids = [], set()
+for t in T:
+    w = t['id']
+    if w in ids: errors.append(f'{w}: duplicate id')
+    ids.add(w)
+    if t['cat'] not in CATS: errors.append(f'{w}: unknown category {t["cat"]}')
+    if t['pal'] not in PALETTES: errors.append(f'{w}: unknown palette {t["pal"]}')
+    if t['font'] not in FONTS: errors.append(f'{w}: unknown font {t["font"]}')
+    if t['hero'] not in HEROES: errors.append(f'{w}: unknown hero {t["hero"]}')
+    for s in t['secs']:
+        if s.split(':')[0] not in SECTIONS: errors.append(f'{w}: unknown section {s}')
+    for k in ('name', 'short', 'city', 'phone', 'since', 'owner'):
+        if k not in t['biz']: errors.append(f'{w}: biz.{k} missing')
+if errors:
+    print('\n'.join(errors)); sys.exit(1)
+
+used = set()
+pinned = [i for t in T for i in t.get('pin', [])]
+dupe = {i for i in pinned if pinned.count(i) > 1}
+if dupe:
+    print('pinned twice:', dupe); sys.exit(1)
+used |= set(pinned)
+short = []
+for t in T:
+    n = need(t)
+    got = list(t.get('pin', []))
+    for s in t.get('sets') or (SETS[t['cat']] + FALLBACK):
+        for pid in BY_SET.get(s, []):
+            if len(got) >= n: break
+            if pid not in used:
+                got.append(pid); used.add(pid)
+    if len(got) < n: short.append(f'{t["id"]}: {len(got)}/{n} photos')
+    t['photos'] = got[:n]
+    t.pop('pin', None); t.pop('sets', None)
+
+with io.open(os.path.join(SITE, 'data', 'templates.js'), 'w', encoding='utf-8', newline='\n') as f:
+    f.write('// Studio templates. Generated by tools/studio/templates.py: edit there, not here.\n')
+    f.write('export const TEMPLATES = [\n')
+    for t in T:
+        f.write('  ' + json.dumps(t, ensure_ascii=False) + ',\n')
+    f.write('];\n')
+
+print(len(T), 'templates,', len(used), 'photos used of', len(PHOTOS))
+from collections import Counter
+print('heroes:', dict(Counter(t['hero'] for t in T)))
+print('\n'.join(short) or 'every template has all its photos')

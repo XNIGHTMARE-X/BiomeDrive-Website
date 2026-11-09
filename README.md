@@ -23,6 +23,15 @@ Same black look, for Razorpay's website review and for clients who want the deta
 - Shared: `css/pages.css` (after `style.css`), `js/page.js` (smooth scroll, entrances, reveals, the index, the currency switch, the mail picker), `js/config.js` (contact settings, also used by `main.js`).
 - Pages are folders (`pricing/index.html`) and use root paths (`/css/...`), so `/pricing/` works both locally and on Cloudflare.
 
+## Studio (added 2026-11-09)
+`/studio/` lets visitors try on a website before we build it. "Studio" in the nav now opens it; the team section stays on the home page.
+- **The page** (`site/studio/index.html`, `studio.css`, `studio.js`): a drifting wall of template pictures, a gallery filtered by kind of business and mood (cards scroll through the page on hover), a full-screen viewer (desktop, tablet and phone frames; every palette and font pairing, applied live; previous and next), and a colour lab (shuffle palettes by mood, lock or edit any colour, contrast checks, live preview on any template). "Start with this look" opens `/contact/?look=…&palette=…&font=…` and fills in the message (`js/page.js`).
+- **Templates** render from data: `site/studio/view/?t=<id>` draws one template with the kit (`kit/kit.js` and `kit/kit.css`: 20 heroes, 21 sections, 4 navs, 2 footers, motion). Add `&p=<palette>` and `&f=<font>` to re-dress it; the Studio sends palette and font changes to the frame with `postMessage`.
+- **Data** (`site/studio/data/`): 100 templates, four for each kind of business. `content.js` (25 kinds of business: services, steps, reviews, questions, figures), `palettes.js` (76), `fonts.js` (39 pairings, Google Fonts and Fontshare), `photos.js` (420 Unsplash photographs served by Lorem Picsum), `templates.js` (generated, see below).
+- **Tools** (`tools/studio/`): `templates.py` defines every template, checks it and gives each its own photos (no photo is used twice in the Studio), then writes `templates.js`. `build_data.py` rebuilds palettes and photos from the Taste skill library. `shots.mjs` screenshots templates (`--full`) and makes the gallery thumbnails (`--thumb`, into `site/studio/thumbs/`). `check.mjs` drives the whole Studio page. `bump.py` raises the `?v=` on every Studio import after a change, so browsers and Cloudflare fetch the new files.
+- After changing templates: `python tools/studio/templates.py`, then `node tools/studio/shots.mjs http://localhost:5198 site/studio/thumbs 1440 "" --thumb`, then `python tools/studio/bump.py`.
+- Credits: palettes and type pairings partly from the Taste skill library by Leonxlnx (MIT); photographs from Unsplash via Lorem Picsum (Unsplash licence). Both are credited in the Studio footer.
+
 ## Run locally
 From the repo folder:
 

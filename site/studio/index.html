@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio · BiomeDrive</title>
+<meta name="description" content="Try on your website before we build it: 100 templates for plumbers, cafés, salons, lawyers and more. Change the colours and fonts live, then send us the look you like.">
+<link rel="canonical" href="https://biomedrive.com/studio/">
+<meta name="theme-color" content="#0b0b0b">
+<meta name="color-scheme" content="dark">
+<meta name="darkreader-lock">
+<link rel="icon" href="/img/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,300..900&family=Inter+Tight:ital,wght@0,300..800;1,300..500&family=Newsreader:ital,opsz,wght@1,6..72,300..500&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css?v=13">
+<link rel="stylesheet" href="/css/pages.css?v=2">
+<link rel="stylesheet" href="/studio/studio.css?v=9">
+<script>(function () { var d = document.documentElement; d.classList.add('js'); if (matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('calm'); })();</script>
+</head>
+<body class="page studio" id="top">
+<a class="skip" href="#main">Skip to the content</a>
+
+<header class="nav solid" id="nav">
+  <a class="brand" href="/" aria-label="BiomeDrive home"><span class="brand-mark" aria-hidden="true"></span><span>BiomeDrive</span></a>
+  <nav class="nav-links" aria-label="Main"><a href="/#work">Work</a><a href="/#about">About</a><a href="/studio/" aria-current="page">Studio</a><a href="/pricing/">Pricing</a></nav>
+  <a class="nav-cta" href="/contact/"><i></i><span class="long">Contact us</span><span class="short">Contact</span></a>
+</header>
+
+<main id="main" class="pg st">
+  <!-- ================= INTRO: words left, a wall of templates drifting on the right ================= -->
+  <section class="st-hero">
+    <div class="st-wall" aria-hidden="true"><div class="st-wall-in" id="wall"></div></div>
+    <header class="pg-head st-head">
+      <p class="pg-k rise">Studio</p>
+      <h1 class="pg-h" data-split>Try on your website. <em>Before we build&nbsp;it.</em></h1>
+      <p class="pg-lede rise">Browse <b id="nTpl">100</b> templates made for real small businesses: plumbers, cafés, salons, lawyers and more. Open one, try it in new colours and fonts, and send us the look you like. We build it for you.</p>
+      <div class="st-acts rise">
+        <a class="btn" href="#templates">Browse templates <span class="arr">↓</span></a>
+        <a class="btn btn-line" href="#colour">Play with colour</a>
+      </div>
+      <dl class="st-facts rise">
+        <div><dt id="nTpl2">100</dt><dd>templates</dd></div>
+        <div><dt id="nCat">25</dt><dd>kinds of business</dd></div>
+        <div><dt id="nPal">76</dt><dd>colour palettes</dd></div>
+        <div><dt id="nFont">39</dt><dd>font pairings</dd></div>
+      </dl>
+    </header>
+  </section>
+
+  <!-- ================= TEMPLATES ================= -->
+  <section class="st-tpl" id="templates" aria-labelledby="tpl-h">
+    <div class="st-tpl-top">
+      <h2 class="sec-h reveal" id="tpl-h">Find your <em>starting point.</em></h2>
+      <p class="pg-lede reveal">Filter by the kind of business or the mood you want. Hover a template to scroll through it, and click to open it full size.</p>
+    </div>
+    <div class="st-filters" id="filters">
+      <div class="chips" role="group" aria-label="Kind of business" id="fGroup"></div>
+      <div class="st-f2">
+        <label class="sel"><span class="sr">Business</span><select id="fCat" aria-label="Kind of business"></select></label>
+        <div class="chips sm" role="group" aria-label="Mood" id="fMood"></div>
+        <p class="st-count" aria-live="polite" id="fCount"></p>
+      </div>
+    </div>
+    <div class="st-grid" id="grid"></div>
+    <p class="st-empty" id="empty" hidden>No template matches all of those. <button type="button" class="u-link" id="clear">Clear the filters</button></p>
+  </section>
+
+  <!-- ================= COLOUR LAB ================= -->
+  <section class="st-lab" id="colour" aria-labelledby="lab-h">
+    <div class="st-lab-top">
+      <h2 class="sec-h reveal" id="lab-h">Play with <em>colour.</em></h2>
+      <p class="pg-lede reveal">Press <b>Shuffle</b> for a new palette in the mood you choose. Lock the colours you like, click any colour to change it, and watch the site change as you go. Every palette is checked so the text stays easy to read.</p>
+    </div>
+    <div class="lab-sw" id="labSw" aria-label="Your palette"></div>
+    <div class="lab-grid">
+      <div class="lab-ctrl">
+        <p class="lab-k">Mood</p>
+        <div class="chips sm" role="group" aria-label="Palette mood" id="labMood"></div>
+        <div class="lab-btns">
+          <button type="button" class="btn" id="labShuffle">Shuffle <kbd>Space</kbd></button>
+          <button type="button" class="btn btn-line" id="labBack" disabled>Back</button>
+        </div>
+        <p class="lab-k">Readability</p>
+        <ul class="lab-checks" id="labChecks"></ul>
+        <p class="lab-k">Try it on</p>
+        <label class="sel full"><span class="sr">Template</span><select id="labTpl" aria-label="Template to preview"></select></label>
+        <div class="lab-btns">
+          <button type="button" class="btn btn-line" id="labOpen">Open full size</button>
+          <a class="btn btn-line" id="labGo" href="/contact/">Start with these colours</a>
+        </div>
+      </div>
+      <div class="lab-prev"><div class="lab-frame" id="labStage"><iframe id="labFrame" title="Template in your colours" loading="lazy"></iframe></div></div>
+    </div>
+    <div class="lab-lib">
+      <p class="lab-k">Or start from one of ours</p>
+      <div class="chips sm" role="group" aria-label="Palette mood" id="libMood"></div>
+      <div class="pal-wall" id="libWall"></div>
+    </div>
+  </section>
+
+  <section class="ask" aria-labelledby="ask-h">
+    <h2 class="pg-h reveal" id="ask-h">Found <em>the one?</em></h2>
+    <a class="btn reveal" href="/contact/">Tell us about your business <span class="arr">→</span></a>
+  </section>
+</main>
+
+<!-- ================= TEMPLATE VIEWER ================= -->
+<dialog class="vw" id="vw" aria-labelledby="vwName">
+  <div class="vw-bar">
+    <button type="button" class="vw-x" id="vwClose" aria-label="Close the preview"><span aria-hidden="true">←</span> <span class="lg">All templates</span></button>
+    <div class="vw-t"><b id="vwName"></b><span id="vwCat"></span></div>
+    <div class="seg" role="group" aria-label="Screen size" id="vwDev">
+      <button type="button" data-dev="desk" aria-pressed="true">Desktop</button><button type="button" data-dev="tab" aria-pressed="false">Tablet</button><button type="button" data-dev="phone" aria-pressed="false">Phone</button>
+    </div>
+    <div class="vw-step"><button type="button" data-step="-1" aria-label="Previous template">←</button><button type="button" data-step="1" aria-label="Next template">→</button></div>
+    <a class="vw-open" id="vwOpen" target="_blank" rel="noopener">Open in a new tab ↗</a>
+    <a class="btn vw-go" id="vwGo" href="/contact/">Start with this look <span class="arr">→</span></a>
+  </div>
+  <div class="vw-main">
+    <div class="vw-stage" id="vwStage"><div class="vw-frame" id="vwFrameBox"><iframe id="vwFrame" title="Template preview"></iframe></div></div>
+    <aside class="vw-side" aria-label="Change the look">
+      <div class="seg tabs" role="tablist">
+        <button type="button" role="tab" aria-selected="true" data-tab="pal">Colours</button><button type="button" role="tab" aria-selected="false" data-tab="font">Fonts</button>
+      </div>
+      <div class="vw-pane" data-pane="pal">
+        <p class="lab-k">Made for this template</p>
+        <div class="pal-list" id="vwSug"></div>
+        <button type="button" class="btn btn-line full" id="vwShuffle">Shuffle a new palette</button>
+        <div id="vwMineBox" hidden><p class="lab-k">From your colour lab</p><div class="pal-list" id="vwMine"></div></div>
+        <p class="lab-k">All palettes</p>
+        <div class="chips xs" role="group" aria-label="Palette mood" id="vwMood"></div>
+        <div class="pal-list" id="vwAll"></div>
+      </div>
+      <div class="vw-pane" data-pane="font" hidden>
+        <p class="lab-k">Font pairings</p>
+        <div class="font-list" id="vwFonts"></div>
+      </div>
+    </aside>
+  </div>
+</dialog>
+
+<footer class="foot">
+  <div class="foot-row">
+    <nav aria-label="Footer"><a href="/#work">Work</a><a href="/#about">About</a><a href="/studio/">Studio</a><a href="/pricing/">Pricing</a></nav>
+    <a href="/contact/">Contact</a>
+    <p>Remote, for the US and Europe · © <span data-year>2026</span></p>
+    <a href="#top">Back to top ↑</a>
+  </div>
+  <nav class="foot-legal" aria-label="Legal"><a href="/terms/">Terms</a><a href="/refunds/">Refunds and cancellation</a><a href="/privacy/">Privacy</a><a href="/delivery/">Service delivery</a></nav>
+  <p class="st-credit">Template photographs from <a href="https://unsplash.com" rel="noopener">Unsplash</a> via Lorem Picsum. Palettes and pairings partly from the Taste skill library (MIT).</p>
+  <p class="foot-word" aria-hidden="true"><span>BiomeDrive</span></p>
+</footer>
+
+<script src="/js/vendor/lenis.min.js" defer></script>
+<script src="/js/config.js" defer></script>
+<script src="/js/page.js?v=2" defer></script>
+<script type="module" src="/studio/studio.js?v=9"></script>
+</body>
+</html>

@@ -200,8 +200,16 @@
         openPick(send, `New project from ${name}`, body, app => { msg.textContent = `Opening ${app}…`; });
       });
       // pricing links like /contact/?plan=business pre-pick the plan
-      const want = new URLSearchParams(location.search).get('plan'), sel = $('#f-plan');
+      const qs = new URLSearchParams(location.search);
+      const want = qs.get('plan'), sel = $('#f-plan');
       if (want && sel && [...sel.options].some(o => o.value === want)) sel.value = want;
+      // the Studio's "Start with this look" brings the chosen template, colours and fonts
+      const look = qs.get('look'), box = $('#f-msg');
+      if (look && box && !box.value) {
+        const clean = s => String(s || '').replace(/[^\w\s,.&'’()-]/g, '').slice(0, 140);
+        const code = [look, qs.get('palette'), qs.get('font')].filter(Boolean).map(clean).join(' / ');
+        box.value = `I like this look from your Studio: ${clean(qs.get('name') || look)}.\nStudio code: ${code}\n\n`;
+      }
     }
   }
 })();
