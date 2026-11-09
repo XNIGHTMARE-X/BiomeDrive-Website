@@ -199,7 +199,7 @@
         msg.textContent = 'Pick where to send it from.';
         openPick(send, `New project from ${name}`, body, app => { msg.textContent = `Opening ${app}…`; });
       });
-      // pricing links like /contact/?plan=growth pre-pick the plan
+      // pricing links like /contact/?plan=business pre-pick the plan
       const want = new URLSearchParams(location.search).get('plan'), sel = $('#f-plan');
       if (want && sel && [...sel.options].some(o => o.value === want)) sel.value = want;
     }

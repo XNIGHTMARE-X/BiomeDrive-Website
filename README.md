@@ -16,8 +16,8 @@ v7 is one black design after osply.co (its home and About pages). There are no c
 
 ## Inner pages (added 2026-11-08)
 Same black look, for Razorpay's website review and for clients who want the details:
-- `site/pricing/`: the three plans (Starter $79/month, Growth $149/month, Own it $999 once) with a USD / GBP / EUR switch (it guesses from the browser language and remembers the choice), how paying works, and questions. Prices live in the `data-usd`, `data-gbp` and `data-eur` attributes.
-- `site/contact/`: the address with the mail picker, the same form plus a plan picker (`/contact/?plan=growth` pre-picks it), and the company details.
+- `site/pricing/`: a one-time build fee plus an optional monthly care plan (since 2026-11-09). One page $499 (care $29/month), business site $999 (care $49/month), bigger projects from $1,499 (quoted). Half to start, half at launch; the site is the client's once paid. A USD / GBP / EUR switch (it guesses from the browser language and remembers the choice), how paying works, and questions. Prices live in the `data-usd`, `data-gbp` and `data-eur` attributes.
+- `site/contact/`: the address with the mail picker, the same form plus a plan picker (`/contact/?plan=business` pre-picks it; also `one-page` and `custom`), and the company details.
 - `site/terms/`, `site/refunds/`, `site/privacy/`, `site/delivery/`: the legal pages, each with a short summary and an index that follows your reading.
 - `site/404.html`, `site/robots.txt`, `site/sitemap.xml`. Without a `404.html`, Cloudflare Pages served the home page for every unknown address.
 - Shared: `css/pages.css` (after `style.css`), `js/page.js` (smooth scroll, entrances, reveals, the index, the currency switch, the mail picker), `js/config.js` (contact settings, also used by `main.js`).
@@ -42,7 +42,7 @@ Then open http://localhost:5196 (`biomedrive` in `.claude/launch.json`).
 
 ## Before going live
 - **Fill the last yellow placeholder:** `{{PHONE}}` on the contact page. The CIN, registered office and courts city (Bengaluru) are filled in from the MCA record (2026-11-09).
-- The legal pages are a draft, not legal advice: have the CA or a lawyer read them. The 14-day first-payment refund and the buy-out price ($499 / £399 / €449) are business promises; confirm both.
+- The legal pages are a draft, not legal advice: have the CA or a lawyer read them. The refundable first build payment, the 14-day care plan refund and the build times on the delivery page (5 business days for one page, 10 for a business site) are business promises; confirm them.
 - The full company name appears only on the contact and legal pages (Razorpay needs it there); everywhere else the site says only "BiomeDrive".
 - Contact (`CONFIG` in `site/js/config.js`): the page shows `hello@biomedrive.com`, but clicking it, or sending the form, opens a picker (Gmail, Outlook or the visitor's mail app). The email it starts goes to everyone in `CONFIG.team` (jay@ and naheel@). Those addresses are assembled only when an option is picked, so they never appear on the page. Create `hello@` in Cloudflare Email Routing as well, for anyone who types the address by hand.
 - The services in the drum (`#drum` in `index.html`) are a first draft; keep only what we offer.
