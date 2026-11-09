@@ -41,7 +41,7 @@ Then open http://localhost:5196 (`biomedrive` in `.claude/launch.json`).
 - `_v1/`, `_v2/`, `_v5/`: earlier versions, kept for reference. `_v5/` has the colour schemes, the Wall / Pile / Fan heroes and the unique-picture wall.
 
 ## Before going live
-- **Fill the yellow placeholders** on the contact and legal pages: `{{CIN}}`, `{{REGISTERED_ADDRESS}}`, `{{PHONE}}` and `{{CITY}}` (courts for disputes). Search the `site/` folder for `{{`.
+- **Fill the last yellow placeholder:** `{{PHONE}}` on the contact page. The CIN, registered office and courts city (Bengaluru) are filled in from the MCA record (2026-11-09).
 - The legal pages are a draft, not legal advice: have the CA or a lawyer read them. The 14-day first-payment refund and the buy-out price ($499 / £399 / €449) are business promises; confirm both.
 - The full company name appears only on the contact and legal pages (Razorpay needs it there); everywhere else the site says only "BiomeDrive".
 - Contact (`CONFIG` in `site/js/config.js`): the page shows `hello@biomedrive.com`, but clicking it, or sending the form, opens a picker (Gmail, Outlook or the visitor's mail app). The email it starts goes to everyone in `CONFIG.team` (jay@ and naheel@). Those addresses are assembled only when an option is picked, so they never appear on the page. Create `hello@` in Cloudflare Email Routing as well, for anyone who types the address by hand.
