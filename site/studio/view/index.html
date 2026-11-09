@@ -13,15 +13,15 @@
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="preconnect" href="https://picsum.photos">
 <link rel="preconnect" href="https://fastly.picsum.photos">
-<link rel="stylesheet" href="/studio/kit/kit.css?v=9">
+<link rel="stylesheet" href="/studio/kit/kit.css?v=10">
 <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 <div id="page"></div>
 <script src="/js/vendor/lenis.min.js"></script>
 <script type="module">
-  import { TEMPLATES } from '/studio/data/templates.js?v=9';
-  import { render, dress, animate, findPalette, findFont, applyPalette, applyFont } from '/studio/kit/kit.js?v=9';
+  import { TEMPLATES } from '/studio/data/templates.js?v=10';
+  import { render, dress, animate, findPalette, findFont, applyPalette, applyFont } from '/studio/kit/kit.js?v=10';
 
   const q = new URLSearchParams(location.search);
   const t = TEMPLATES.find(x => x.id === q.get('t')) || TEMPLATES[0];

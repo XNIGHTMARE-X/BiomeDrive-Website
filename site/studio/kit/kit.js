@@ -1,11 +1,11 @@
 // BiomeDrive Studio: the template engine. Turns one template definition (data/templates.js)
 // into a full page: nav, hero, sections and footer, dressed by a palette and a type pairing.
 // Used by studio/view/ (which the Studio shows in an iframe) and by the thumbnail tool.
-import { PALETTES } from '../data/palettes.js?v=9';
-import { FONTS } from '../data/fonts.js?v=9';
-import { PHOTOS, PHOTO_URL } from '../data/photos.js?v=9';
-import { CATS } from '../data/content.js?v=9';
-import { icon } from './icons.js?v=9';
+import { PALETTES } from '../data/palettes.js?v=10';
+import { FONTS } from '../data/fonts.js?v=10';
+import { PHOTOS, PHOTO_URL } from '../data/photos.js?v=10';
+import { CATS } from '../data/content.js?v=10';
+import { icon } from './icons.js?v=10';
 
 const ALT = Object.fromEntries(PHOTOS.map(p => [p.id, p.alt]));
 const YEAR = new Date().getFullYear();

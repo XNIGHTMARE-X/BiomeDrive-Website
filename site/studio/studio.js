@@ -1,9 +1,9 @@
 // BiomeDrive · Studio page: the drifting wall, filters and cards, the template viewer and the colour lab.
 // Templates render inside an iframe (studio/view/); this page only sends it a palette or a font.
-import { TEMPLATES } from './data/templates.js?v=9';
-import { PALETTES } from './data/palettes.js?v=9';
-import { FONTS } from './data/fonts.js?v=9';
-import { CATS, GROUPS, MOODS } from './data/content.js?v=9';
+import { TEMPLATES } from './data/templates.js?v=10';
+import { PALETTES } from './data/palettes.js?v=10';
+import { FONTS } from './data/fonts.js?v=10';
+import { CATS, GROUPS, MOODS } from './data/content.js?v=10';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -283,7 +283,11 @@ function loadAllFonts() {
 }
 addEventListener('message', e => {
   if (e.origin !== location.origin || !e.data) return;
-  if (e.data.type === 'ready' && e.source === vFrame.contentWindow) { /* frame ready */ }
+  // a palette or font picked while the frame was still loading would be lost: send the current ones again
+  if (e.data.type === 'ready' && e.source === vFrame.contentWindow) {
+    if (V.pal) { const p = fromId(V.pal) || mine.find(m => m.id === V.pal); if (p) send(vFrame, { type: 'palette', palette: p }); }
+    if (V.font) send(vFrame, { type: 'font', id: V.font });
+  }
   if (e.data.type === 'ready' && e.source === lFrame.contentWindow) send(lFrame, { type: 'palette', palette: L.pal });
 });
 let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (vw.open) fitFrame(vBox, vFrame, V.dev, vStage, true); fitLab(); }, 120); });

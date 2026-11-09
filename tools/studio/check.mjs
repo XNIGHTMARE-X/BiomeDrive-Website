@@ -46,6 +46,11 @@ console.log('after font:', JSON.stringify(await frameState()));
 await shot('5-viewer-font');
 if (W >= 900) { await ev(`document.querySelector('#vwDev [data-dev="phone"]').click()`); await sleep(1500); await shot('6-viewer-phone'); }
 await ev(`document.getElementById('vwClose').click()`); await sleep(800);
+// pick a palette the instant the viewer opens, before its frame has loaded: it must still apply
+await ev(`document.querySelector('.tc[data-id="tidewater"]').click(); setTimeout(() => document.querySelector('#vwSug .pal:nth-child(3)').click(), 30); 1`);
+await sleep(5000);
+console.log('quick pick:', await ev(`(() => { const p = document.querySelector('#vwSug .pal[aria-pressed="true"]')?.dataset.p; const bg = getComputedStyle(document.getElementById('vwFrame').contentDocument.body).backgroundColor; return p + ' -> frame ' + bg; })()`));
+await ev(`document.getElementById('vwClose').click()`); await sleep(800);
 console.log('closed:', await ev(`!document.getElementById('vw').open`), await ev('location.pathname + location.search'));
 // colour lab
 await scrollTo('#colour'); await sleep(4000);
