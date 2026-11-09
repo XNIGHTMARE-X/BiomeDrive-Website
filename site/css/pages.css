@@ -16,8 +16,8 @@
 .todo { background: #f5d76e; color: #111; padding: 0 .25em; border-radius: 2px; font-family: var(--f-mono); font-size: .86em; }
 
 /* headings split into words that rise out of a mask (page.js) */
-.wd { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .06em .1em 0; margin: 0 -.06em -.1em 0; }
-.wd > span { display: inline-block; transform: translateY(108%); transition: transform 1.1s var(--ease) calc(var(--i, 0) * 55ms); }
+.wd { display: inline-block; overflow: hidden; vertical-align: top; padding: .2em .14em .26em .22em; margin: -.2em -.14em -.26em -.22em; }   /* room for italic overhang, tall capitals and descenders */
+.wd > span { display: inline-block; transform: translateY(140%); transition: transform 1.1s var(--ease) calc(var(--i, 0) * 55ms); }
 .ready .wd > span { transform: none; }
 /* everything else fades up once, in order */
 .js .rise { opacity: 0; transform: translateY(22px); transition: opacity .9s var(--ease), transform .9s var(--ease); transition-delay: calc(.25s + var(--i, 0) * 80ms); }

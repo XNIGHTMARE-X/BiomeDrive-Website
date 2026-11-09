@@ -1,11 +1,11 @@
 // BiomeDrive Studio: the template engine. Turns one template definition (data/templates.js)
 // into a full page: nav, hero, sections and footer, dressed by a palette and a type pairing.
 // Used by studio/view/ (which the Studio shows in an iframe) and by the thumbnail tool.
-import { PALETTES } from '../data/palettes.js?v=10';
-import { FONTS } from '../data/fonts.js?v=10';
-import { PHOTOS, PHOTO_URL } from '../data/photos.js?v=10';
-import { CATS } from '../data/content.js?v=10';
-import { icon } from './icons.js?v=10';
+import { PALETTES } from '../data/palettes.js?v=17';
+import { FONTS } from '../data/fonts.js?v=17';
+import { PHOTOS, PHOTO_URL } from '../data/photos.js?v=17';
+import { CATS } from '../data/content.js?v=17';
+import { icon } from './icons.js?v=17';
 
 const ALT = Object.fromEntries(PHOTOS.map(p => [p.id, p.alt]));
 const YEAR = new Date().getFullYear();
@@ -160,13 +160,13 @@ function mapSvg(x, seed) {
 }
 
 /* ---------------- nav ---------------- */
-const LINKS = { services: 'Services', menu: 'Menu', about: 'About', reviews: 'Reviews', quote: 'Reviews', area: 'Areas', prices: 'Prices', gallery: 'Work', listings: 'Homes', visit: 'Visit', faq: 'FAQ', team: 'Team', book: 'Book', contact: 'Contact', process: 'How it works' };
-const IDS = { quote: 'reviews', gallery: 'work', listings: 'work', process: 'how', servicesGrid: 'services' };
-const OVER = new Set(['cover', 'card']);
+const LINKS = { hscroll: 'Services', stack: 'Services', accordion: 'Services', follow: 'Services', services: 'Services', menu: 'Menu', about: 'About', reviews: 'Reviews', quote: 'Reviews', area: 'Areas', prices: 'Prices', gallery: 'Work', listings: 'Homes', visit: 'Visit', faq: 'FAQ', team: 'Team', book: 'Book', contact: 'Contact', process: 'How it works' };
+const IDS = { hscroll: 'services', stack: 'services', accordion: 'services', follow: 'services', quote: 'reviews', gallery: 'work', listings: 'work', process: 'how', servicesGrid: 'services' };
+const OVER = new Set(['cover', 'card', 'liquid', 'zoom']);
 function nav(x) {
   const { t, C, b } = x;
   const keys = t.secs.map(s => (s === 'servicesGrid' ? 'services' : s)).filter(s => LINKS[s]);
-  const order = ['services', 'menu', 'prices', 'gallery', 'listings', 'about', 'process', 'area', 'reviews', 'quote', 'team', 'visit', 'faq'];
+  const order = ['services', 'hscroll', 'stack', 'accordion', 'follow', 'menu', 'prices', 'gallery', 'listings', 'about', 'process', 'area', 'reviews', 'quote', 'team', 'visit', 'faq'];
   let links = order.filter(k => keys.includes(k)).slice(0, 4).map(k => [IDS[k] || k, LINKS[k]]);
   const logo = `<a class="logo${t.logoRound ? ' round' : ''}" href="#top">${t.mark === false ? '' : `<span class="mk">${icon(t.mark || C.icon)}</span>`}<span>${esc(b.short)}</span></a>`;
   const cta = C.emergency
@@ -377,6 +377,74 @@ const HERO = {
   <div class="band" data-r="clip" style="--i:2"><div class="par" data-par="0.12">${photo(x, null, 2200, 'fill', 'eager')}</div></div>
 </section>`;
   },
+  zoom(x) {
+    const { t } = x;
+    return `<section class="hero h-zoom" id="top" data-zoom><div class="zm-stick">
+  <div class="zm-win">${photo(x, null, 2200, 'fill', 'eager')}<div class="zm-scrim"></div></div>
+  <h1 class="d hl zm-head" data-r="lines">${lines(t.head, x)}</h1>
+  <div class="zm-end wrap"><p class="h-sub">${esc(x.fill(t.sub))}</p><div class="acts">${x.b1()}${x.b2()}</div></div>
+  <p class="zm-hint" aria-hidden="true">Scroll</p>
+</div></section>`;
+  },
+  terrain(x) {
+    const { t, C } = x;
+    return `<section class="hero h-terrain" id="top"><canvas class="topo" data-topo aria-hidden="true"></canvas>
+  <div class="wrap tr-in"><p class="h-lede" data-r="up">${icon(C.icon)}${esc(x.fill(t.lede || `${C.label} in {city} since {since}`))}</p><h1 class="d hl" data-r="lines" style="--i:1">${lines(t.head, x)}</h1>
+  <div class="row" data-r="up" style="--i:3"><p class="h-sub">${esc(x.fill(t.sub))}</p><div class="acts">${x.b1()}${x.b2()}</div></div></div>
+</section>`;
+  },
+  liquid(x) {
+    const { t } = x;
+    return `<section class="hero h-cover h-liquid" id="top">
+  <div class="bg"><div class="lq" data-liquid>${photo(x, null, 2000, 'fill', 'eager')}</div></div>
+  <div class="scrim"></div>
+  <div class="wrap in">
+    <h1 class="d hl" data-r="lines">${lines(t.head, x)}</h1>
+    <div class="row"><p class="h-sub" data-r="up" style="--i:3">${esc(x.fill(t.sub))}</p><div class="acts" data-r="up" style="--i:4">${x.b1()}${x.b2()}</div></div>
+  </div>
+</section>`;
+  },
+  depth(x) {
+    const { t, C } = x;
+    const p1 = photo(x, '3 / 4', 640, '', 'eager'), p2 = photo(x, '4 / 5', 640, '', 'eager');
+    const st = C.stats.find(z => z.v !== '{years}') || C.stats[0];
+    return `<section class="hero h-depth" id="top">
+  <div class="dp-field" aria-hidden="true">
+    <div class="dp dp-a" data-depth="0.5"><div class="dp-in" data-r="up" style="--i:2">${p1}</div></div>
+    <div class="dp dp-b" data-depth="1"><div class="dp-in" data-r="up" style="--i:3">${p2}</div></div>
+    <div class="dp dp-c" data-depth="1.6"><div class="dp-card" data-r="scale" style="--i:4"><b>${statVal(st, x)}</b><small>${esc(x.fill(st.l))}</small></div></div>
+    <div class="dp dp-d" data-depth="0.8"><div class="dp-chip" data-r="scale" style="--i:5">${icon(C.badges[0].i)}${esc(C.badges[0].t)}</div></div>
+  </div>
+  <div class="wrap dp-words"><p class="h-lede" data-r="up">${icon(C.icon)}${esc(x.fill(t.lede || `${C.label} in {city} since {since}`))}</p><h1 class="d hl" data-r="lines" style="--i:1">${lines(t.head, x)}</h1><p class="h-sub" data-r="up" style="--i:3">${esc(x.fill(t.sub))}</p><div class="acts" data-r="up" style="--i:4">${x.b1()}${x.b2()}</div></div>
+</section>`;
+  },
+  slices(x) {
+    const { t, C } = x;
+    const id = x.nextPhoto(), N = 5;
+    const url = id == null ? '' : PHOTO_URL(id, 1400, 1100);
+    const sl = Array.from({ length: N }, (_, i) => `<span class="sl" style="--k:${i};--n:${N};background-image:url('${url}')"></span>`).join('');
+    return `<section class="hero h-slices" id="top"><div class="wrap grid">
+  <div class="copy"><p class="h-lede" data-r="up">${icon(C.icon)}${esc(x.fill(t.lede || `${C.label} in {city} since {since}`))}</p><h1 class="d hl" data-r="lines" style="--i:1">${lines(t.head, x)}</h1><p class="h-sub" data-r="up" style="--i:3">${esc(x.fill(t.sub))}</p><div class="acts" data-r="up" style="--i:4">${x.b1()}${x.b2()}</div></div>
+  <div class="slices" data-slices data-r="in" role="img" aria-label="${esc(ALT[id] || '')}">${sl}</div>
+</div></section>`;
+  },
+  typewave(x) {
+    const { t, C, b } = x;
+    const letters = [...b.short].map((ch, i) => (ch === ' ' ? '<span class="tw-sp"> </span>' : `<span class="tw-l" style="--k:${i}">${esc(ch)}</span>`)).join('');
+    return `<section class="hero h-type" id="top"><div class="wrap">
+  <p class="h-lede" data-r="up">${icon(C.icon)}${esc(x.fill(t.lede || `${C.label} in {city} since {since}`))}</p>
+  <p class="d tw-name" data-fit data-typewave aria-label="${esc(b.short)}"><span class="tw-in">${letters}</span></p>
+  <div class="tw-row"><h1 class="d tw-head hl" data-r="lines" style="--i:2">${lines(t.head, x)}</h1><div class="r" data-r="up" style="--i:3"><p class="h-sub">${esc(x.fill(t.sub))}</p><div class="acts">${x.b1()}${x.b2()}</div></div></div>
+</div></section>`;
+  },
+  reel(x) {
+    const { t, C } = x;
+    const pics = C.services.slice(0, 3).map((z, i) => `<figure class="rl-pan rl-pic">${photo(x, null, 1400, 'fill', i ? 'lazy' : 'eager')}<figcaption><b>${esc(x.fill(z.n))}</b><span>${money(z.p, x) || esc(C.label)}</span></figcaption></figure>`).join('');
+    return `<section class="hero h-reel" id="top" data-hreel><div class="rl-stick"><div class="rl-track">
+  <div class="rl-pan rl-copy"><p class="h-lede" data-r="up">${icon(C.icon)}${esc(x.fill(t.lede || `${C.label} in {city} since {since}`))}</p><h1 class="d hl" data-r="lines" style="--i:1">${lines(t.head, x)}</h1><p class="h-sub" data-r="up" style="--i:3">${esc(x.fill(t.sub))}</p><div class="acts" data-r="up" style="--i:4">${x.b1()}${x.b2()}</div><p class="rl-hint" data-r="up" style="--i:5">Keep scrolling ${icon('arrow')}</p></div>
+  ${pics}
+</div></div></section>`;
+  },
   stack(x) {
     const { t } = x;
     return `<section class="hero h-stack" id="top"><div class="wrap">
@@ -426,7 +494,7 @@ const SEC = {
     const card = (r, i) => `<article class="rv"><p>“${esc(r.q)}”</p><footer><b>${esc(r.who)}</b><span>${esc(x.town(i))}</span></footer></article>`;
     const a = x.reviews.slice(0, 3).map(card).join(''), bb = x.reviews.slice(3).map((r, i) => card(r, i + 3)).join('');
     return `<section class="sec reviews" id="reviews"><div class="wrap sec-top">${head('reviews', x)}<div class="rv-score" data-r="up"><span class="big">${x.rate.v}</span><span><span class="stars">★★★★★</span><br><small class="mute">${esc(x.fill(x.rate.l))}</small></span></div></div>
-  <div class="rv-rows"><div class="mq"><div class="mq-track" style="--mq:64s">${a}${a.replace(/<article/g, '<article aria-hidden="true"')}${a.replace(/<article/g, '<article aria-hidden="true"')}</div></div><div class="mq rev"><div class="mq-track" style="--mq:74s">${bb}${bb.replace(/<article/g, '<article aria-hidden="true"')}${bb.replace(/<article/g, '<article aria-hidden="true"')}</div></div></div>
+  <div class="rv-rows"><div class="mq"><div class="mq-track" data-copies="3" style="--mq:64s">${a}${a.replace(/<article/g, '<article aria-hidden="true"')}${a.replace(/<article/g, '<article aria-hidden="true"')}</div></div><div class="mq rev"><div class="mq-track" data-copies="3" style="--mq:74s">${bb}${bb.replace(/<article/g, '<article aria-hidden="true"')}${bb.replace(/<article/g, '<article aria-hidden="true"')}</div></div></div>
 </section>`;
   },
   quote(x, opt = {}) {
@@ -533,6 +601,39 @@ const SEC = {
     const r = x.reviews[4] || x.reviews[0];
     return `<section class="feature"><div class="bg" data-par="0.12">${photo(x, null, 2200, 'fill')}</div><div class="scrim"></div><div class="wrap cap"><p class="d" data-r="lines">${lines([`“${r.q}”`], x)}</p><small data-r="up" style="--i:2">${esc(r.who)}, ${esc(x.town(4))}</small></div></section>`;
   },
+  hscroll(x) {
+    const { C } = x;
+    const cards = C.services.map((z, j) => `<article class="hs-card${j % 3 === 1 ? ' fld fld-2' : j % 3 === 2 ? ' fld fld-1' : ''}">${icon(z.i)}<div><h3 class="d">${esc(x.fill(z.n))}</h3><p>${esc(x.fill(z.d))}</p></div>${z.p !== '' ? `<span class="pr">${money(z.p, x)}</span>` : '<span></span>'}</article>`).join('');
+    return `<section class="hsx" id="services" data-hscroll><div class="hs-stick"><div class="wrap hs-top">${head('services', x)}<p class="mute">${esc(x.fill(x.t.svcIntro || INTROS.services))}</p></div><div class="hs-track">${cards}<div class="hs-end"><a class="btn" href="${x.href1}">${esc(x.act1)} <span class="arr">→</span></a></div></div></div></section>`;
+  },
+  stack(x) {
+    const { C } = x;
+    const cards = C.services.slice(0, 5).map((z, j) => `<article class="sk-card fld ${j % 2 ? 'fld-1' : 'fld-3'}" style="--j:${j}"><div class="sk-top"><span class="sk-ico">${icon(z.i)}</span><span class="pr">${money(z.p, x)}</span></div><div><h3 class="d">${esc(x.fill(z.n))}</h3><p>${esc(x.fill(z.d))}</p></div><a class="ulink" href="${x.href1}">${esc(x.act1)}</a></article>`).join('');
+    return `<section class="sec sk" id="services"><div class="wrap"><div class="sec-top">${head('services', x)}<p data-r="up">${esc(x.fill(x.t.svcIntro || INTROS.services))}</p></div><div class="sk-list" data-stack>${cards}</div></div></section>`;
+  },
+  pushline(x, opt = {}) {
+    const a = x.C.services.map(z => x.fill(z.n)).join('  ·  ');
+    return `<section class="push fld ${opt.fld || ''}" data-push aria-hidden="true"><p class="d pl a">${esc(a)}  ·  ${esc(a)}</p><p class="d pl b">${esc(x.fill(x.C.cta))}  ${esc(x.fill(x.C.cta))}</p></section>`;
+  },
+  odometer(x, opt = {}) {
+    const cells = x.C.stats.map((z, j) => {
+      const v = z.v === '{years}' ? x.years : z.v, str = num(v, z.d || 0);
+      const digits = [...str].map((ch, q) => (/\d/.test(ch) ? `<span class="od-d" data-n="${ch}" style="--q:${q}"><span>${'0123456789'.split('').map(n => `<i>${n}</i>`).join('')}</span></span>` : `<span class="od-p">${esc(ch)}</span>`)).join('');
+      return `<div class="stat od" style="--j:${j}"><div class="v" aria-label="${esc(str + (z.s || ''))}">${digits}<span class="od-p">${esc(z.s || '')}</span></div><p class="l">${esc(x.fill(z.l))}</p></div>`;
+    }).join('');
+    return `<section class="sec stats odo fld ${opt.fld || 'fld-1'}" data-odo><div class="wrap grid">${cells}</div></section>`;
+  },
+  accordion(x) {
+    const { C } = x;
+    const panels = C.services.slice(0, 5).map((z, j) => `<button type="button" class="ac-p${j ? '' : ' on'}" aria-expanded="${!j}"><span class="ac-n d">${esc(x.fill(z.n))}</span><span class="ac-body">${icon(z.i)}<span class="ac-d">${esc(x.fill(z.d))}</span>${z.p !== '' ? `<b>${money(z.p, x)}</b>` : ''}</span></button>`).join('');
+    return `<section class="sec acc" id="services"><div class="wrap"><div class="sec-top">${head('services', x)}<p data-r="up">${esc(x.fill(x.t.svcIntro || INTROS.services))}</p></div><div class="ac-row" data-acc data-r="up">${panels}</div></div></section>`;
+  },
+  follow(x) {
+    const { C } = x;
+    const rows = C.services.map((z, j) => `<li><a class="fw-row" href="${x.href1}" data-fw="${j}"><span class="d fw-n">${esc(x.fill(z.n))}</span><span class="fw-d">${esc(x.fill(z.d))}</span><span class="fw-p">${money(z.p, x)}</span></a></li>`).join('');
+    const cards = C.services.map((z, j) => `<div class="fw-card" data-k="${j}">${icon(z.i)}<b>${esc(x.fill(z.n))}</b><span>${money(z.p, x) || esc(C.label)}</span></div>`).join('');
+    return `<section class="sec fw" id="services"><div class="wrap"><div class="sec-top">${head('services', x)}<p data-r="up">${esc(x.fill(x.t.svcIntro || INTROS.services))}</p></div><ul class="fw-list" data-r="list">${rows}</ul></div><div class="fw-float" data-follow aria-hidden="true">${cards}</div></section>`;
+  },
   bigband(x, opt = {}) {
     const items = x.C.services.map(s => `<span class="it d">${esc(x.fill(s.n))}${icon('sparkle')}</span>`).join('');
     return `<section class="bigband fld ${opt.fld || 'fld-1'}" aria-hidden="true"><div class="mq"><div class="mq-track" style="--mq:46s">${items}${items}</div></div></section>`;
@@ -585,6 +686,7 @@ export function dress(t, opts = {}) {
   root.style.setProperty('--br', t.btn === 'pill' ? '999px' : t.btn === 'soft' ? '10px' : (t.r ?? 0) + 'px');
   root.style.setProperty('--t', t.motion === 'calm' ? 1.25 : t.motion === 'lively' ? 0.85 : 1);
   root.dataset.img = t.img || 'color';
+  root.dataset.fx = (t.fx || []).join(' ');
   root.classList.toggle('has-util', t.nav === 'util');
   document.title = `${t.biz.name} · ${t.name} template · BiomeDrive Studio`;
 }
@@ -601,7 +703,7 @@ export function animate(opts = {}) {
   // fit giant words to their row
   const fit = () => $$('[data-fit]').forEach(el => {
     el.style.fontSize = '100px';
-    const inner = el.querySelector('.ln > span') || el;
+    const inner = el.querySelector('.ln > span, .tw-in') || el;
     const w = inner.getBoundingClientRect().width || inner.scrollWidth || 1;
     const ps = getComputedStyle(el.parentElement);
     const room = el.parentElement.clientWidth - parseFloat(ps.paddingLeft) - parseFloat(ps.paddingRight);
@@ -637,7 +739,7 @@ export function animate(opts = {}) {
     $$('.stats [data-count], .figs [data-count]').forEach(el => { const o = new IntersectionObserver(es => { if (es[0].isIntersecting) { count(el); o.disconnect(); } }, { threshold: 0.5 }); o.observe(el); });
   };
   // wait (briefly) for the fonts so lines don't reflow mid-reveal
-  Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 1200))]).then(() => requestAnimationFrame(start));
+  Promise.all([Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 1200))]), opts.gate || Promise.resolve()]).then(() => requestAnimationFrame(start));
 
   // smooth scroll
   let lenis = null;

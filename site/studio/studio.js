@@ -1,9 +1,9 @@
 // BiomeDrive · Studio page: the drifting wall, filters and cards, the template viewer and the colour lab.
 // Templates render inside an iframe (studio/view/); this page only sends it a palette or a font.
-import { TEMPLATES } from './data/templates.js?v=10';
-import { PALETTES } from './data/palettes.js?v=10';
-import { FONTS } from './data/fonts.js?v=10';
-import { CATS, GROUPS, MOODS } from './data/content.js?v=10';
+import { TEMPLATES } from './data/templates.js?v=17';
+import { PALETTES } from './data/palettes.js?v=17';
+import { FONTS } from './data/fonts.js?v=17';
+import { CATS, GROUPS, MOODS } from './data/content.js?v=17';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -112,7 +112,10 @@ const palChip = (p, on) => `<button type="button" class="pal" data-p="${p.id}" a
 (function wall() {
   const box = $('#wall');
   const cols = [[], [], []];
-  TEMPLATES.forEach((t, i) => cols[i % 3].push(t));
+  // a mixed set of 48: interactive and still templates taking turns
+  const moving = TEMPLATES.filter(t => t.fx && t.fx.length), still = TEMPLATES.filter(t => !(t.fx && t.fx.length));
+  const pool = []; for (let i = 0; pool.length < 48 && (i < moving.length || i < still.length); i++) { if (moving[i]) pool.push(moving[i]); if (still[i * 2]) pool.push(still[i * 2]); }
+  pool.forEach((t, i) => cols[i % 3].push(t));
   box.innerHTML = cols.map(c => { const items = c.map(t => `<div class="wt"><img src="${thumb(t)}" alt="" loading="lazy" decoding="async" onerror="this.remove()" style="background:${(PAL[t.pal] || {}).bg}"></div>`).join(''); return `<div class="wcol">${items}${items}</div>`; }).join('');
   if (calm) return;
   const el = $$('.wcol', box), speed = [0.32, -0.24, 0.4], off = [0, 0, 0];
@@ -135,7 +138,8 @@ const palChip = (p, on) => `<button type="button" class="pal" data-p="${p.id}" a
 /* =========================================================
    FILTERS AND CARDS
    ========================================================= */
-const F = { group: 'all', cat: 'all', mood: 'all' };
+const F = { group: 'all', cat: 'all', mood: 'all', fx: false };
+const live = t => !!(t.fx && t.fx.length);
 let shown = TEMPLATES;
 const inGroup = t => F.group === 'all' || CATS[t.cat].group === F.group;
 const chip = (v, label, on, n) => `<button type="button" data-v="${v}" aria-pressed="${on}">${esc(label)}${n != null ? `<small>${n}</small>` : ''}</button>`;
@@ -144,18 +148,19 @@ function drawFilters() {
   const cats = [...new Set(TEMPLATES.filter(inGroup).map(t => t.cat))];
   $('#fCat').innerHTML = `<option value="all">Every kind of business</option>` + cats.map(c => `<option value="${c}"${F.cat === c ? ' selected' : ''}>${esc(CATS[c].label)}</option>`).join('');
   const moods = MOODS.filter(m => TEMPLATES.some(t => t.moods.includes(m.id)));
-  $('#fMood').innerHTML = chip('all', 'Any mood', F.mood === 'all') + moods.map(m => chip(m.id, m.label, F.mood === m.id)).join('');
+  $('#fMood').innerHTML = `<button type="button" class="fx-chip" data-fx aria-pressed="${F.fx}">Interactive<small>${TEMPLATES.filter(live).length}</small></button>` + chip('all', 'Any mood', F.mood === 'all') + moods.map(m => chip(m.id, m.label, F.mood === m.id)).join('');
 }
 function card(t, k) {
   const p = PAL[t.pal], C = CATS[t.cat];
   return `<button type="button" class="tc" data-id="${t.id}" style="--k:${k};--c-bg:${p.bg};--c-ink:${p.ink}">
-    <span class="tc-shot"><img src="${thumb(t)}" alt="" loading="${k < 6 ? 'eager' : 'lazy'}" decoding="async" onerror="this.outerHTML='<span class=&quot;ph-fill&quot;>${esc(t.name)}</span>'"><span class="tc-open">Open ↗</span></span>
+    <span class="tc-shot">${live(t) ? '<span class="tc-fx">Interactive</span>' : ''}<img src="${thumb(t)}" alt="" loading="${k < 6 ? 'eager' : 'lazy'}" decoding="async" onerror="this.outerHTML='<span class=&quot;ph-fill&quot;>${esc(t.name)}</span>'"><span class="tc-open">Open ↗</span></span>
     <span class="tc-meta"><b>${esc(t.name)}</b><span>${esc(C.label)}</span></span>
     <span class="tc-foot"><span class="sw5"><i style="background:${p.bg}"></i><i style="background:${p.surface}"></i><i style="background:${p.ink}"></i><i style="background:${p.accent}"></i><i style="background:${(p.fields && p.fields[0] ? p.fields[0].bg : p.muted)}"></i></span><span class="tc-moods">${t.moods.map(m => MOOD[m]).join(' · ')}</span></span>
   </button>`;
 }
 function drawGrid() {
-  shown = TEMPLATES.filter(t => inGroup(t) && (F.cat === 'all' || t.cat === F.cat) && (F.mood === 'all' || t.moods.includes(F.mood)));
+  shown = TEMPLATES.filter(t => inGroup(t) && (F.cat === 'all' || t.cat === F.cat) && (F.mood === 'all' || t.moods.includes(F.mood)) && (!F.fx || live(t)));
+  shown.sort((a, b) => live(b) - live(a));   // the interactive ones first
   $('#grid').innerHTML = shown.map(card).join('');
   $('#empty').hidden = shown.length > 0;
   $('#fCount').textContent = `${shown.length} of ${TEMPLATES.length} templates`;
@@ -170,8 +175,8 @@ $('#grid').addEventListener('pointerenter', e => {
 $('#grid').addEventListener('click', e => { const c = e.target.closest('.tc'); if (c) openViewer(c.dataset.id); });
 $('#fGroup').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; F.group = b.dataset.v; F.cat = 'all'; drawFilters(); drawGrid(); });
 $('#fCat').addEventListener('change', e => { F.cat = e.target.value; drawGrid(); });
-$('#fMood').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; F.mood = b.dataset.v; drawFilters(); drawGrid(); });
-$('#clear').addEventListener('click', () => { F.group = F.cat = F.mood = 'all'; drawFilters(); drawGrid(); });
+$('#fMood').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.hasAttribute('data-fx')) F.fx = !F.fx; else F.mood = b.dataset.v; drawFilters(); drawGrid(); });
+$('#clear').addEventListener('click', () => { F.group = F.cat = F.mood = 'all'; F.fx = false; drawFilters(); drawGrid(); });
 drawFilters(); drawGrid();
 
 /* =========================================================
@@ -232,7 +237,7 @@ function openViewer(id, opt = {}) {
   const t = TPL[id]; if (!t) return;
   V.id = id; V.pal = opt.pal || null; V.font = opt.font || null;
   $('#vwName').textContent = t.name;
-  $('#vwCat').textContent = `${CATS[t.cat].label} · ${t.moods.map(m => MOOD[m]).join(', ')}`;
+  $('#vwCat').textContent = `${CATS[t.cat].label} · ${t.moods.map(m => MOOD[m]).join(', ')}${live(t) ? ' · Interactive: move your mouse and scroll' : ''}`;
   drawSide(); loadFrame(); links();
   if (!vw.open) { vw.showModal(); root.classList.add('vw-on'); window.__lenis?.stop(); }
   requestAnimationFrame(() => fitFrame(vBox, vFrame, V.dev, vStage, true));

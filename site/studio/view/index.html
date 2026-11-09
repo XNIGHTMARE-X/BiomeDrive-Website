@@ -13,22 +13,27 @@
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="preconnect" href="https://picsum.photos">
 <link rel="preconnect" href="https://fastly.picsum.photos">
-<link rel="stylesheet" href="/studio/kit/kit.css?v=10">
+<link rel="stylesheet" href="/studio/kit/kit.css?v=17">
+<link rel="stylesheet" href="/studio/kit/fx.css?v=17">
 <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 <div id="page"></div>
 <script src="/js/vendor/lenis.min.js"></script>
+<script src="/js/vendor/motion.js"></script>
 <script type="module">
-  import { TEMPLATES } from '/studio/data/templates.js?v=10';
-  import { render, dress, animate, findPalette, findFont, applyPalette, applyFont } from '/studio/kit/kit.js?v=10';
+  import { TEMPLATES } from '/studio/data/templates.js?v=17';
+  import { render, dress, animate, findPalette, findFont, applyPalette, applyFont } from '/studio/kit/kit.js?v=17';
+  import { prepare, run } from '/studio/kit/fx.js?v=17';
 
   const q = new URLSearchParams(location.search);
   const t = TEMPLATES.find(x => x.id === q.get('t')) || TEMPLATES[0];
   const shot = q.has('shot');
   dress(t, { palette: q.get('p'), font: q.get('f') });
   document.getElementById('page').innerHTML = render(t, { shot });
-  const api = animate({ shot });
+  const fx = prepare(t, { shot });               // interactive templates: preloader, cursor, split letters…
+  const api = animate({ shot, gate: fx.gate });  // reveals wait for the preloader
+  run(t, { shot }, fx);
 
   // the Studio talks to this page: new palette or type, without reloading
   const swap = fn => (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) ? document.startViewTransition(fn) : fn();
