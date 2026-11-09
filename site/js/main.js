@@ -1,11 +1,10 @@
 /* BiomeDrive v7 · main.js
    One black page after osply.co: a loader, the home header with a contour terrain you can stir,
    a card that flutters down the intro, statements that brighten as you read, a services drum,
-   the project index (WebGL covers with a mouse trail) and its project window, and contact.
+   the project index (WebGL covers with a mouse trail) and its project window. Contact lives on /contact/.
    Lenis and Motion are optional: the page works without them. */
 
 // ---- Contact settings live in js/config.js (shared with the other pages) ----
-const CONFIG = window.BD_CONFIG;
 
 // ---- The projects (the index shows each site's home page as its cover) ----
 const PROJECTS = [
@@ -501,82 +500,7 @@ const PROJECTS = [
   const nav = $('#nav');
   const updateNav = () => nav.classList.toggle('solid', homeHead.getBoundingClientRect().bottom < 0);
 
-  /* ---------------- contact: one address on the page, a picker, an email to the whole team ---------------- */
-  const enc = encodeURIComponent;
-  const at = u => `${u}@${CONFIG.domain}`;
-  const query = o => Object.entries(o).filter(([, v]) => v).map(([k, v]) => `${k}=${enc(v)}`).join('&');
-  const MAILERS = { // each takes the recipients (comma-separated), a subject and a body
-    gmail: { name: 'Gmail', url: (to, s, b) => `https://mail.google.com/mail/?view=cm&fs=1&${query({ to, su: s, body: b })}` },
-    outlook: { name: 'Outlook', url: (to, s, b) => `https://outlook.live.com/mail/0/deeplink/compose?${query({ to, subject: s, body: b })}` },
-    app: { name: 'your mail app', url: (to, s, b) => { const q = query({ subject: s, body: b }); return `mailto:${to}${q ? `?${q}` : ''}`; } },
-  };
-  const mail = $('#mailBtn'), pick = $('#mailPick'), picks = $$('button', pick);
-  mail.textContent = at(CONFIG.shown);
-  let opener = null, draft = null, hideT = 0;
-
-  function placePick() {
-    if (!opener) return;
-    const r = opener.getBoundingClientRect(), w = pick.offsetWidth, h = pick.offsetHeight, m = 12, gap = 10;
-    if (r.bottom < 0 || r.top > innerHeight) return closePick(false); // its button scrolled away
-    const up = r.bottom + gap + h > innerHeight - m && r.top - gap - h > m;
-    pick.classList.toggle('up', up);
-    pick.style.left = `${clamp(r.left, m, innerWidth - w - m)}px`;
-    pick.style.top = `${up ? r.top - gap - h : r.bottom + gap}px`;
-  }
-  function openPick(el, subject = '', body = '', onPick = null) {
-    clearTimeout(hideT);
-    if (opener && opener !== el) opener.setAttribute('aria-expanded', 'false');
-    opener = el; draft = { subject, body, onPick };
-    el.setAttribute('aria-expanded', 'true');
-    pick.hidden = false;
-    placePick(); // reads its size, which also lets the fade-in below start from the closed state
-    pick.classList.add('open');
-    picks[0].focus({ preventScroll: true });
-  }
-  function closePick(refocus = true) {
-    if (!opener) return;
-    const el = opener;
-    opener = null; draft = null;
-    el.setAttribute('aria-expanded', 'false');
-    pick.classList.remove('open');
-    hideT = setTimeout(() => { pick.hidden = true; }, calm ? 0 : 250);
-    if (refocus) el.focus({ preventScroll: true });
-  }
-
-  mail.addEventListener('click', () => (opener === mail ? closePick() : openPick(mail)));
-  picks.forEach(btn => btn.addEventListener('click', () => {
-    const m = MAILERS[btn.dataset.mailer], { subject, body, onPick } = draft;
-    const url = m.url(CONFIG.team.map(at).join(','), subject, body);
-    if (btn.dataset.mailer === 'app') location.href = url;
-    else window.open(url, '_blank', 'noopener');
-    closePick();
-    if (onPick) onPick(m.name);
-  }));
-  pick.addEventListener('keydown', e => {
-    const i = picks.indexOf(document.activeElement), n = picks.length;
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); picks[i < 0 ? 0 : (i + (e.key === 'ArrowDown' ? 1 : n - 1)) % n].focus(); }
-    else if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); picks[e.key === 'Home' ? 0 : n - 1].focus(); }
-    else if (e.key === 'Tab') { e.preventDefault(); closePick(); }
-  });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && opener) { e.preventDefault(); closePick(); } });
-  document.addEventListener('pointerdown', e => { if (opener && !pick.contains(e.target) && !opener.contains(e.target)) closePick(false); });
-  addEventListener('scroll', placePick, { passive: true });
-  addEventListener('resize', placePick);
-
   $('#year').textContent = new Date().getFullYear();
-  const form = $('#form'), msg = $('#formMsg'), send = $('#formSend');
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const d = new FormData(form);
-    const name = (d.get('name') || '').trim(), email = (d.get('email') || '').trim();
-    const badEmail = !/^\S+@\S+\.\S+$/.test(email);
-    $('#f-name').closest('.field').classList.toggle('err', !name);
-    $('#f-email').closest('.field').classList.toggle('err', badEmail);
-    if (!name || badEmail) { msg.textContent = !name ? 'Add your name so we know who to reply to.' : 'Add an email we can reply to.'; return; }
-    const body = `Name: ${name}\nEmail: ${email}\nBusiness / site: ${d.get('site') || '-'}\n\n${(d.get('message') || '').trim()}`;
-    msg.textContent = 'Pick where to send it from.';
-    openPick(send, `New project from ${name}`, body, app => { msg.textContent = `Opening ${app}…`; });
-  });
 
   /* ---------------- one loop ---------------- */
   let lastT = performance.now(), lastY = scrollY(), vel = 0;

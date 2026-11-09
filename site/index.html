@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,300..900&family=Inter+Tight:ital,wght@0,300..800;1,300..500&family=Newsreader:ital,opsz,wght@1,6..72,300..500&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=13">
+<link rel="stylesheet" href="css/style.css?v=14">
 <link rel="stylesheet" href="css/pages.css?v=1">
 <script>
   // Before first paint: reduced motion, and the loader (once per visit; it clears itself after 9 s if anything fails).
@@ -37,7 +37,7 @@
     <span>BiomeDrive</span>
   </a>
   <nav class="nav-links" aria-label="Sections"><a href="#work">Work</a><a href="#about">About</a><a href="#studio">Studio</a><a href="/pricing/">Pricing</a></nav>
-  <a class="nav-cta" href="#contact"><i></i><span class="long">Taking new projects</span><span class="short">Contact</span></a>
+  <a class="nav-cta" href="/contact/"><i></i><span class="long">Start a project</span><span class="short">Contact</span></a>
 </header>
 
 <main>
@@ -51,12 +51,12 @@
       <div class="home-bar">
         <span>Web design studio</span>
         <nav aria-label="Sections"><a href="#work">Work</a>, <a href="#about">About</a>, <a href="#studio">Studio</a>, <a href="/pricing/">Pricing</a></nav>
-        <a href="#contact">Contact</a>
+        <a href="/contact/">Contact</a>
       </div>
     </header>
     <div class="home-copy">
       <p class="home-lede">We design, build and host websites for small businesses in the US and Europe.</p>
-      <p class="home-links"><a href="#work">See the work ↓</a><a href="#contact">Start a project</a></p>
+      <p class="home-links"><a href="#work">See the work ↓</a><a href="/contact/">Start a project</a></p>
     </div>
     <p class="home-scroll">Scroll down <span>↓</span></p>
   </section>
@@ -145,32 +145,12 @@
   </div>
 </section>
 
-<!-- ================= CONTACT ================= -->
-<section class="contact" id="contact" aria-labelledby="contact-h">
-  <p class="contact-k">Contact</p>
-  <h2 id="contact-h" class="contact-h">Let’s build <em>yours.</em></h2>
-  <div class="contact-grid">
-    <div>
-      <p class="contact-lede">No website yet, or one that’s tired? Tell us about your business and we’ll reply within one business day with ideas and a rough plan. Plans start at $79 a month: <a class="u-link" href="/pricing/">see pricing</a>.</p>
-      <button type="button" class="mail" id="mailBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="mailPick">hello@biomedrive.com</button>
-    </div>
-    <form class="form" id="form" novalidate>
-      <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required></div>
-      <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
-      <div class="field"><label for="f-site">Business or current website</label><input id="f-site" name="site" autocomplete="url" placeholder="Optional"></div>
-      <div class="field"><label for="f-msg">What do you need?</label><textarea id="f-msg" name="message" rows="3"></textarea></div>
-      <button class="btn" type="submit" id="formSend" aria-controls="mailPick">Send <span class="arr">→</span></button>
-      <p class="form-msg" id="formMsg" role="status"></p>
-    </form>
-  </div>
-</section>
-
 </main>
 
 <footer class="foot">
   <div class="foot-row">
     <nav aria-label="Footer"><a href="#work">Work</a><a href="#about">About</a><a href="#studio">Studio</a><a href="/pricing/">Pricing</a></nav>
-    <a href="#contact">Contact</a>
+    <a href="/contact/">Contact</a>
     <p>Remote, for the US and Europe · © <span id="year">2026</span></p>
     <a href="#top">Back to top ↑</a>
   </div>
@@ -195,19 +175,11 @@
   </div>
 </dialog>
 
-<!-- Mail picker: opens under the address or the Send button. Each option starts a new email to the team (CONFIG in main.js) -->
-<div class="mailpick" id="mailPick" role="menu" aria-label="Write to us with" hidden>
-  <p class="mailpick-k" aria-hidden="true">Write with</p>
-  <button type="button" role="menuitem" data-mailer="gmail">Gmail <span class="arr" aria-hidden="true">↗</span></button>
-  <button type="button" role="menuitem" data-mailer="outlook">Outlook <span class="arr" aria-hidden="true">↗</span></button>
-  <button type="button" role="menuitem" data-mailer="app">Mail app <span class="arr" aria-hidden="true">→</span></button>
-</div>
 
 <!-- Lenis 1.1.13 and Motion 11.11.13 (MIT), hosted with the site -->
 <script src="js/vendor/lenis.min.js" defer></script>
 <script src="js/vendor/motion.js" defer></script>
 <script src="js/topo.js?v=8" defer></script>
-<script src="js/config.js" defer></script>
-<script src="js/main.js?v=12" defer></script>
+<script src="js/main.js?v=13" defer></script>
 </body>
 </html>
