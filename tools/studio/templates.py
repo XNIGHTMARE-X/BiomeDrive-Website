@@ -18,7 +18,8 @@ for p in PHOTOS:
 HEROES = {'split': 1, 'monument': 1, 'cover': 1, 'poster': 0, 'rescue': 1, 'arch': 1, 'editorial': 1, 'inline': None,
           'collage': 3, 'menu': 1, 'numbers': 1, 'spotlight': 1, 'map': 0, 'compare': 1, 'stack': 1,
           'splitR': 1, 'card': 1, 'ticker': 1, 'index': 3, 'banner': 1,
-          'zoom': 1, 'terrain': 0, 'liquid': 1, 'depth': 2, 'slices': 1, 'typewave': 0, 'reel': 3}
+          'zoom': 1, 'terrain': 0, 'liquid': 1, 'depth': 2, 'slices': 1, 'typewave': 0, 'reel': 3,
+          'lens': 1, 'dots': 0, 'doors': 1, 'typewall': 0, 'drum': 0, 'mosaic': 1}
 SECTIONS = {'trust': 0, 'services': 0, 'servicesGrid': 0, 'about': 1, 'stats': 0, 'reviews': 0, 'quote': 0, 'process': 0,
             'area': 0, 'faq': 0, 'cta': 0, 'statement': 0, 'gallery': 3, 'prices': 0, 'menu': 0, 'visit': 0, 'team': 0,
             'book': 0, 'contact': 0, 'feature': 1, 'bigband': 0,
@@ -555,7 +556,7 @@ tpl(id='apex', name='Apex', cat='roofing', moods=['bold', 'dark'], pal='black-cr
     biz=dict(name='Apex Roofing', short='Apex', city='Tulsa', area=['Brookside', 'Midtown', 'Broken Arrow', 'Jenks', 'Owasso', 'Bixby'], phone='(918) 555-0141', since=2001, owner='Garrett Lane', addr='15 E 5th St, Tulsa, OK 74103'),
     head=['Roofs built', 'for big weather.'], sub='Storm repairs, new roofs and insurance claims handled start to finish, with a 25-year warranty.')
 tpl(id='gable', name='Gable & Eave', cat='roofing', moods=['classic', 'calm'], pal='three-stones', font='literata-book', fx=['chars', 'progress', 'curtain'],
-    nav='center', hero='zoom', secs=['services', 'stack', 'reviews', 'contact'], foot='cols', r=4, btn='sq', img='warm',
+    nav='center', hero='doors', secs=['services', 'stack', 'reviews', 'contact'], foot='cols', r=4, btn='sq', img='warm',
     biz=dict(name='Gable & Eave Roofing', short='Gable & Eave', city='Durham', area=['Gilesgate', 'Elvet', 'Neville’s Cross', 'Shincliffe', 'Chester-le-Street'], phone='0191 496 0638', since=1983, owner='Peter Raine', addr='22 Saddler St, Durham DH1', cur='£', uk=True),
     head=['Old roofs,', 'cared for.'], sub='Slate, tile and leadwork on period homes, repaired by roofers who take their time.')
 # construction
@@ -564,7 +565,7 @@ tpl(id='monolith', name='Monolith', cat='construction', moods=['minimal', 'dark'
     biz=dict(name='Monolith Construction', short='Monolith', city='Porto', area=['Ribeira', 'Boavista', 'Foz do Douro', 'Bonfim', 'Matosinhos'], phone='+351 22 555 0193', since=2008, owner='Rui Andrade', addr='Rua das Flores 64, Porto', cur='€', uk=True),
     head=['Concrete, steel', 'and patience.'], sub='Design-and-build for homes and studios across Porto, with one fixed price and one site manager.')
 tpl(id='rafter', name='Rafter', cat='construction', moods=['bold', 'warm'], pal='hi-vis', font='red-hat-black', fx=['tilt', 'magnet', 'velomarquee'],
-    nav='bar', hero='depth', secs=['bigband:fld-1', 'accordion', 'stats', 'quote', 'contact'], foot='big', r=6, btn='soft',
+    nav='bar', hero='mosaic', secs=['bigband:fld-1', 'accordion', 'stats', 'quote', 'contact'], foot='big', r=6, btn='soft',
     biz=dict(name='Rafter Builders', short='Rafter', city='Louisville', area=['The Highlands', 'Crescent Hill', 'Germantown', 'St. Matthews', 'NuLu', 'Clifton'], phone='(502) 555-0163', since=1998, owner='Jim Hardesty', addr='700 E Market St, Louisville, KY 40202'),
     head=['Extensions,', 'built right.'], sub='Additions, kitchens and porches built on a fixed-price contract, with weekly photo updates.')
 # landscaping
@@ -573,16 +574,16 @@ tpl(id='canopy', name='Canopy', cat='landscaping', moods=['fresh', 'dark'], pal=
     biz=dict(name='Canopy Landscapes', short='Canopy', city='Chattanooga', area=['North Shore', 'St. Elmo', 'Lookout Mountain', 'Signal Mountain', 'Highland Park'], phone='(423) 555-0175', since=2011, owner='Will Avery', addr='300 Frazier Ave, Chattanooga, TN 37405'),
     head=['Shape your', 'piece of the land.'], sub='Garden design, stone work and native planting for hillside homes around Chattanooga.')
 tpl(id='grove', name='Grove', cat='landscaping', moods=['calm', 'luxe'], pal='linen-sage', font='boska-italic', fx=['skew', 'progress', 'curtain', 'chars'],
-    nav='center', hero='zoom', secs=['statement', 'stack', 'reviews', 'faq', 'cta'], foot='cols', r=0, btn='pill', img='soft', motion='calm', mark='tree', logoRound=True,
+    nav='center', hero='lens', secs=['statement', 'stack', 'reviews', 'faq', 'cta'], foot='cols', r=0, btn='pill', img='soft', motion='calm', mark='tree', logoRound=True,
     biz=dict(name='Grove Jardins', short='Grove', city='Bordeaux', area=['Chartrons', 'Saint-Pierre', 'Caudéran', 'Bastide', 'Saint-Émilion'], phone='+33 5 55 50 21 84', since=2005, owner='Claire Dubois', addr='12 rue Notre-Dame, 33000 Bordeaux', cur='€', uk=True),
     head=['Gardens that', 'feel like *home.*'], sub='Courtyards, terraces and country gardens designed and planted around how you live.')
 # cleaning
 tpl(id='shine', name='Shine', cat='cleaning', moods=['playful', 'fresh'], pal='swap-pastels', font='pilcrow-rounded', fx=['magnet', 'tilt', 'velomarquee'],
-    nav='bar', hero='typewave', secs=['bigband:fld-2', 'accordion', 'prices', 'book', 'reviews', 'cta'], foot='big', r=20, btn='pill',
+    nav='bar', hero='typewall', secs=['bigband:fld-2', 'accordion', 'prices', 'book', 'reviews', 'cta'], foot='big', r=20, btn='pill',
     biz=dict(name='Shine Cleaning Co.', short='Shine', city='Tampa', area=['Hyde Park', 'Seminole Heights', 'Ybor City', 'Davis Islands', 'Westchase'], phone='(813) 555-0152', since=2017, owner='Gabriela Ruiz', addr='1600 W Kennedy Blvd, Tampa, FL 33606'),
     head=['Cleaning that', 'makes you *smile.*'], sub='Friendly cleaners, eco products and a price you see before you book.')
 tpl(id='pristine', name='Pristine', cat='cleaning', moods=['luxe', 'calm'], pal='charcoal-room-sage', font='sentient-light', fx=['cursor', 'skew', 'curtain', 'loader'],
-    nav='center', hero='liquid', secs=['trust', 'follow', 'book', 'quote', 'faq', 'cta'], foot='cols', r=0, btn='sq', img='soft',
+    nav='center', hero='lens', secs=['trust', 'follow', 'book', 'quote', 'faq', 'cta'], foot='cols', r=0, btn='sq', img='soft',
     biz=dict(name='Pristine Home Care', short='Pristine', city='Luxembourg', area=['Kirchberg', 'Limpertsberg', 'Belair', 'Grund', 'Strassen'], phone='+352 555 0137', since=2012, owner='Sophie Weber', addr='12 Grand-Rue, Luxembourg', cur='€', uk=True),
     head=['Quietly', 'immaculate.'], sub='Discreet housekeeping and deep cleans by a small, trusted team.')
 # painting
@@ -591,16 +592,16 @@ tpl(id='pigment', name='Pigment', cat='painting', moods=['playful', 'bold'], pal
     biz=dict(name='Pigment Painters', short='Pigment', city='Valencia', area=['Ruzafa', 'El Carmen', 'Benimaclet', 'Cabanyal', 'Patraix'], phone='+34 96 555 01 73', since=2015, owner='Lucía Ferrer', addr='Carrer de Sueca 22, València', cur='€', uk=True),
     head=['Colour,', 'boldly applied.'], sub='Interior and exterior painting with colour advice, careful prep and spotless clean-up.')
 tpl(id='brushwork', name='Brushwork', cat='painting', moods=['dark', 'luxe'], pal='navy-pink', font='gambarino-general', fx=['cursor', 'magnet', 'grain'],
-    nav='bar', hero='depth', secs=['stack', 'odometer', 'quote', 'faq', 'cta'], foot='big', r=4, btn='sq',
+    nav='bar', hero='lens', secs=['stack', 'odometer', 'quote', 'faq', 'cta'], foot='big', r=4, btn='sq',
     biz=dict(name='Brushwork Decorators', short='Brushwork', city='Hudson', area=['Catskill', 'Kinderhook', 'Rhinebeck', 'Saugerties', 'Germantown'], phone='(518) 555-0144', since=2006, owner='Eli Marsh', addr='500 Warren St, Hudson, NY 12534'),
     head=['Paint, done', 'like *craft.*'], sub='Hand-painted finishes, limewash and cabinetry for old houses in the Hudson Valley.')
 # handyman
 tpl(id='fixit', name='FixIt', cat='handyman', moods=['bold', 'playful'], pal='white-signal-red', font='spartan-figtree', fx=['magnet', 'tilt', 'scramble'],
-    nav='bar', hero='typewave', secs=['accordion', 'prices', 'odometer', 'reviews', 'cta'], foot='big', r=10, btn='soft',
+    nav='bar', hero='drum', secs=['accordion', 'prices', 'odometer', 'reviews', 'cta'], foot='big', r=10, btn='soft',
     biz=dict(name='FixIt Handyman', short='FixIt', city='St. Louis', area=['Soulard', 'The Hill', 'Tower Grove', 'Clayton', 'Kirkwood', 'Webster Groves'], phone='(314) 555-0128', since=2016, owner='Tony Russo', addr='1900 Park Ave, St. Louis, MO 63104'),
     head=['One visit.', 'The whole list.'], sub='Shelves, doors, TV mounting and small repairs by vetted handymen with clear hourly rates.')
 tpl(id='level', name='Level', cat='handyman', moods=['calm', 'classic'], pal='stone-blueprint', font='zilla-slab', fx=['skew', 'cursor', 'progress'],
-    nav='bar', hero='reel', secs=['follow', 'process', 'quote', 'faq', 'cta'], foot='cols', r=4, btn='soft',
+    nav='bar', hero='drum', secs=['follow', 'process', 'quote', 'faq', 'cta'], foot='cols', r=4, btn='soft',
     biz=dict(name='Level Home Repairs', short='Level', city='Norwich', area=['Golden Triangle', 'Eaton', 'Thorpe St Andrew', 'Hellesdon', 'Wymondham'], phone='01603 960 248', since=2009, owner='Mark Gooch', addr='18 Elm Hill, Norwich NR3', cur='£', uk=True),
     head=['Small jobs,', 'done properly.'], sub='Carpentry, fixes and fitting by careful tradespeople who turn up when they say.')
 # removals
@@ -609,7 +610,7 @@ tpl(id='transit', name='Transit', cat='moving', moods=['bold', 'dark'], pal='ora
     biz=dict(name='Transit Movers', short='Transit', city='Denver', area=['LoHi', 'Capitol Hill', 'Wash Park', 'Highlands', 'Aurora', 'Lakewood'], phone='(720) 555-0186', since=2006, owner='Sam Whitaker', addr='1600 Wynkoop St, Denver, CO 80202'),
     head=['Moving day,', 'handled.'], sub='Local and long-distance moves with our own crews, our own trucks and one fixed price.')
 tpl(id='nomad', name='Nomad', cat='moving', moods=['calm', 'fresh'], pal='rose-grey-green', font='jost-caps', fx=['cursor', 'chars', 'magnet'],
-    nav='bar', hero='terrain', secs=['follow', 'book', 'stack', 'quote', 'faq', 'cta'], foot='cols', r=12, btn='pill',
+    nav='bar', hero='dots', secs=['follow', 'book', 'stack', 'quote', 'faq', 'cta'], foot='cols', r=12, btn='pill',
     biz=dict(name='Nomad Removals', short='Nomad', city='Seville', area=['Triana', 'Santa Cruz', 'Nervión', 'Alameda', 'Los Remedios'], phone='+34 95 555 01 62', since=2013, owner='Javier Morales', addr='Calle Feria 40, Sevilla', cur='€', uk=True),
     head=['New city,', 'new home.'], sub='International and local moves with packing, storage and paperwork handled for you.')
 # auto
@@ -641,11 +642,11 @@ tpl(id='ritual', name='Ritual', cat='cafe', moods=['minimal', 'calm'], pal='coba
     head=['Espresso,', 'the slow way.'], sub='A standing bar, a few tables and coffee roasted every Thursday.')
 # bakery
 tpl(id='rise', name='Rise', cat='bakery', moods=['playful', 'warm'], pal='post-red-mustard', font='cabinet-grotesk', fx=['magnet', 'tilt', 'velomarquee'],
-    nav='bar', hero='typewave', secs=['bigband:fld-2', 'menu', 'process', 'reviews', 'visit'], foot='big', r=14, btn='pill',
+    nav='bar', hero='typewall', secs=['bigband:fld-2', 'menu', 'process', 'reviews', 'visit'], foot='big', r=14, btn='pill',
     biz=dict(name='Rise Bakery', short='Rise', city='Bologna', area=['Quadrilatero', 'Santo Stefano', 'Bolognina', 'Saragozza', 'Murri'], phone='+39 051 555 0182', since=2014, owner='Giulia Bassi', addr='Via Clavature 9, Bologna', cur='€', uk=True),
     head=['Bread that', 'lifts the *day.*'], sub='Sourdough, focaccia and cornetti baked before sunrise in the heart of Bologna.')
 tpl(id='flourfold', name='Flour & Fold', cat='bakery', moods=['fresh', 'calm'], pal='card-pastels', font='erode-sharp', fx=['chars', 'cursor', 'progress'],
-    nav='center', hero='zoom', secs=['statement', 'stack', 'menu', 'visit'], foot='cols', r=10, btn='pill', img='soft',
+    nav='center', hero='mosaic', secs=['statement', 'stack', 'menu', 'visit'], foot='cols', r=10, btn='pill', img='soft',
     biz=dict(name='Flour & Fold', short='Flour & Fold', city='Bruges', area=['Sint-Anna', 'Ezelpoort', 'Sint-Michiels', 'Assebroek', 'Damme'], phone='+32 50 555 01 94', since=2018, owner='Elise Verbeke', addr='Langestraat 41, Brugge', cur='€', uk=True),
     head=['Folded by hand,', 'every morning.'], sub='Croissants, kouign-amann and seasonal tarts from a tiny bakery by the canal.')
 # bar
@@ -654,7 +655,7 @@ tpl(id='afterhours', name='After Hours', cat='bar', moods=['dark', 'luxe'], pal=
     biz=dict(name='After Hours', short='After Hours', city='Madrid', area=['Malasaña', 'Chueca', 'La Latina', 'Lavapiés', 'Salamanca'], phone='+34 91 555 01 47', since=2015, owner='Elena Navarro', addr='Calle del Pez 18, Madrid', cur='€', uk=True),
     head=['Cocktails', 'after *midnight.*'], sub='Low lights, slow jazz and a bar that opens when the dinner crowd goes home.')
 tpl(id='static', name='Static', cat='bar', moods=['bold', 'dark'], pal='candy-on-black', font='unbounded-onest', fx=['cursor', 'glow', 'scramble', 'velomarquee'],
-    nav='bar', hero='liquid', secs=['menu', 'bigband:fld-2', 'gallery', 'book', 'visit'], foot='big', r=8, btn='pill',
+    nav='bar', hero='typewall', secs=['menu', 'bigband:fld-2', 'gallery', 'book', 'visit'], foot='big', r=8, btn='pill',
     biz=dict(name='Static Bar', short='Static', city='Belfast', area=['Cathedral Quarter', 'Botanic', 'Titanic Quarter', 'Ormeau', 'Lisburn Road'], phone='028 9649 6031', since=2019, owner='Ciara Doyle', addr='12 Hill St, Belfast BT1', cur='£', uk=True),
     head=['Loud music,', 'cold drinks.'], sub='DJs every weekend, a late kitchen and cocktails with a sense of humour.')
 # hair salon
@@ -663,16 +664,16 @@ tpl(id='muse', name='Muse', cat='salon', moods=['luxe', 'warm'], pal='blush-aube
     biz=dict(name='Muse Hair Atelier', short='Muse', city='Florence', area=['Oltrarno', 'Santo Spirito', 'Santa Croce', 'Campo di Marte', 'Fiesole'], phone='+39 055 555 0163', since=2012, owner='Chiara Conti', addr='Via Maggio 22, Firenze', cur='€', uk=True),
     head=['Hair as', 'an *art.*'], sub='Colour and cutting in a quiet atelier across the river, by appointment.')
 tpl(id='halo', name='Halo', cat='salon', moods=['playful', 'bold'], pal='navy-pink', font='clash-grotesk', fx=['magnet', 'skew', 'curtain'],
-    nav='bar', hero='slices', secs=['follow', 'menu', 'book', 'reviews', 'visit'], foot='big', r=16, btn='pill',
+    nav='bar', hero='mosaic', secs=['follow', 'menu', 'book', 'reviews', 'visit'], foot='big', r=16, btn='pill',
     biz=dict(name='Halo Hair Bar', short='Halo', city='Orlando', area=['Thornton Park', 'Winter Park', 'College Park', 'Baldwin Park', 'Mills 50'], phone='(407) 555-0148', since=2018, owner='Destiny Cole', addr='100 E Central Blvd, Orlando, FL 32801'),
     head=['Blowouts,', 'color and *glow.*'], sub='Walk out feeling like the best version of you. Book online in seconds.')
 # barber
 tpl(id='steel', name='Steel & Strop', cat='barber', moods=['dark', 'classic'], pal='darkroom', font='rokkitt-literata', fx=['cursor', 'scramble', 'skew', 'grain'],
-    nav='bar', hero='liquid', secs=['menu', 'pushline', 'book', 'visit'], foot='big', r=0, btn='sq', img='mono',
+    nav='bar', hero='doors', secs=['menu', 'pushline', 'book', 'visit'], foot='big', r=0, btn='sq', img='mono',
     biz=dict(name='Steel & Strop', short='Steel & Strop', city='Cardiff', area=['Pontcanna', 'Roath', 'Canton', 'Cathays', 'Penarth'], phone='029 2018 0573', since=2011, owner='Rhys Morgan', addr='14 Castle Arcade, Cardiff CF10', cur='£', uk=True),
     head=['Sharp blades,', 'steady hands.'], sub='Traditional cuts, hot towel shaves and beard work in Castle Arcade.')
 tpl(id='lineup', name='Line Up', cat='barber', moods=['bold', 'playful'], pal='ultramarine-yellow', font='anton-work', fx=['magnet', 'tilt', 'velomarquee'],
-    nav='bar', hero='typewave', secs=['bigband:fld-2', 'menu', 'book', 'reviews', 'visit'], foot='big', r=6, btn='soft',
+    nav='bar', hero='drum', secs=['bigband:fld-2', 'menu', 'book', 'reviews', 'visit'], foot='big', r=6, btn='soft',
     biz=dict(name='Line Up Barbers', short='Line Up', city='Queens', area=['Astoria', 'Long Island City', 'Jackson Heights', 'Sunnyside', 'Flushing'], phone='(718) 555-0193', since=2015, owner='Luis Peña', addr='31-10 Steinway St, Astoria, NY 11103'),
     head=['Crisp lines,', 'every time.'], sub='Fades, line-ups and beard work, with walk-ins welcome and online booking.')
 # spa
@@ -681,12 +682,12 @@ tpl(id='salt', name='Salt', cat='spa', moods=['calm', 'fresh'], pal='cool-white-
     biz=dict(name='Salt Spa', short='Salt', city='Biarritz', area=['Grande Plage', 'Côte des Basques', 'Anglet', 'Bidart', 'Saint-Jean-de-Luz'], phone='+33 5 55 50 41 26', since=2013, owner='Mathilde Etxeberria', addr='8 Place Clemenceau, 64200 Biarritz', cur='€', uk=True),
     head=['Sea air,', 'still water.'], sub='Thalasso, massage and a salt pool above the Atlantic.')
 tpl(id='hush', name='Hush', cat='spa', moods=['dark', 'calm'], pal='walnut-tan', font='eb-garamond', fx=['glow', 'tilt', 'magnet'],
-    nav='center', hero='terrain', secs=['accordion', 'menu', 'process', 'book', 'visit'], foot='big', r=0, btn='pill', motion='calm', mark='lotus',
+    nav='center', hero='lens', secs=['accordion', 'menu', 'process', 'book', 'visit'], foot='big', r=0, btn='pill', motion='calm', mark='lotus',
     biz=dict(name='Hush Retreat', short='Hush', city='Sedona', area=['Uptown', 'West Sedona', 'Oak Creek', 'Village of Oak Creek', 'Cottonwood'], phone='(928) 555-0157', since=2009, owner='Maya Running', addr='200 AZ-179, Sedona, AZ 86336'),
     head=['Let the day', 'go *quiet.*'], sub='Massage, sound baths and desert walks in a retreat among the red rocks.')
 # dental
 tpl(id='enamel', pin=[847], name='Enamel', cat='dental', moods=['fresh', 'minimal'], pal='clinic-teal', font='hanken-medium', fx=['chars', 'progress', 'magnet'],
-    nav='util', hero='zoom', secs=['trust', 'stack', 'odometer', 'quote', 'faq', 'book'], foot='cols', r=12, btn='pill', img='soft',
+    nav='util', hero='dots', secs=['trust', 'stack', 'odometer', 'quote', 'faq', 'book'], foot='cols', r=12, btn='pill', img='soft',
     biz=dict(name='Enamel Dental Studio', short='Enamel', city='Ottawa', area=['The Glebe', 'Westboro', 'ByWard Market', 'Old Ottawa South', 'Kanata'], phone='(613) 555-0172', since=2010, owner='Dr. Sarah Leblanc', addr='800 Bank St, Ottawa, ON'),
     head=['Healthy teeth,', 'calm visits.'], sub='Modern family dentistry with clear prices and same-day emergencies.')
 tpl(id='grin', name='Grin', cat='dental', moods=['playful', 'fresh'], pal='white-mint-tiles', font='chillax-semibold', fx=['magnet', 'tilt', 'velomarquee'],
@@ -695,11 +696,11 @@ tpl(id='grin', name='Grin', cat='dental', moods=['playful', 'fresh'], pal='white
     head=['Dentistry kids', '*actually* like.'], sub='Gentle check-ups, fun rooms and a team that makes every visit easy.')
 # fitness
 tpl(id='momentum', name='Momentum', cat='fitness', moods=['bold', 'dark'], pal='coral-gym', font='archivo-compressed', fx=['skew', 'velomarquee', 'magnet', 'progress'],
-    nav='bar', hero='reel', secs=['bigband:fld-2', 'hscroll', 'prices', 'odometer', 'cta'], foot='big', r=0, btn='sq', img='mono',
+    nav='bar', hero='typewall', secs=['bigband:fld-2', 'hscroll', 'prices', 'odometer', 'cta'], foot='big', r=0, btn='sq', img='mono',
     biz=dict(name='Momentum Athletics', short='Momentum', city='Austin', area=['East Austin', 'Mueller', 'South Congress', 'Zilker', 'Round Rock'], phone='(512) 555-0198', since=2015, owner='Coach Dre Wallace', addr='1200 E 6th St, Austin, TX 78702'),
     head=['Train hard.', 'Recover smart.'], sub='Strength, conditioning and recovery coaching for people with busy lives.')
 tpl(id='core', name='Core', cat='fitness', moods=['calm', 'luxe'], pal='blush-salon', font='albert-sans-semibold', fx=['cursor', 'tilt', 'chars'],
-    nav='center', hero='depth', secs=['accordion', 'prices', 'team', 'quote', 'book'], foot='cols', r=18, btn='pill', img='soft',
+    nav='center', hero='dots', secs=['accordion', 'prices', 'team', 'quote', 'book'], foot='cols', r=18, btn='pill', img='soft',
     biz=dict(name='Core Pilates Studio', short='Core', city='Riga', area=['Old Town', 'Quiet Centre', 'Āgenskalns', 'Mežaparks', 'Jūrmala'], phone='+371 6 555 0184', since=2017, owner='Laura Ozola', addr='Alberta iela 12, Rīga', cur='€', uk=True),
     head=['Strong,', 'from the *core.*'], sub='Reformer and mat Pilates in small classes, for every age and every level.')
 # law
@@ -717,7 +718,7 @@ tpl(id='balance', name='Balance', cat='accounting', moods=['bold', 'fresh'], pal
     biz=dict(name='Balance Bookkeeping', short='Balance', city='Omaha', area=['Old Market', 'Dundee', 'Benson', 'Midtown', 'Papillion'], phone='(402) 555-0115', since=2013, owner='Erin Kowalczyk', addr='1100 Howard St, Omaha, NE 68102'),
     head=['Books balanced,', 'taxes filed.'], sub='Bookkeeping, payroll and tax for small businesses, on one fixed monthly fee.')
 tpl(id='sum', name='Sum', cat='accounting', moods=['minimal', 'calm'], pal='paper-grey-brass', font='franklin-source', fx=['cursor', 'chars', 'progress'],
-    nav='bar', hero='depth', secs=['follow', 'prices', 'stack', 'quote', 'faq', 'contact'], foot='cols', r=6, btn='soft',
+    nav='bar', hero='drum', secs=['follow', 'prices', 'stack', 'quote', 'faq', 'contact'], foot='cols', r=6, btn='soft',
     biz=dict(name='Sum Accountants', short='Sum', city='Brussels', area=['Ixelles', 'Saint-Gilles', 'Etterbeek', 'Uccle', 'Schaerbeek'], phone='+32 2 555 01 63', since=2008, owner='Thomas Janssens', addr='Avenue Louise 120, Bruxelles', cur='€', uk=True),
     head=['Clear numbers,', 'calm decisions.'], sub='Accounts, VAT and advice for founders and freelancers across Brussels.')
 # real estate
@@ -726,7 +727,7 @@ tpl(id='vista', name='Vista', cat='realestate', moods=['luxe', 'calm'], pal='put
     biz=dict(name='Vista Coastal Homes', short='Vista', city='Malibu', area=['Point Dume', 'Broad Beach', 'Carbon Beach', 'Malibu Colony', 'Topanga'], phone='(310) 555-0189', since=1999, owner='Daniela Cruz', addr='23000 Pacific Coast Hwy, Malibu, CA 90265'),
     head=['Homes with', 'a view.'], sub='Buying and selling coastal homes in Malibu, with discretion and local knowledge.')
 tpl(id='quarter', name='Quarter', cat='realestate', moods=['minimal', 'classic'], pal='studio-grey', font='besley-franklin', fx=['chars', 'curtain', 'progress'],
-    nav='bar', hero='zoom', secs=['gallery', 'follow', 'stats:fld-1', 'reviews', 'contact'], foot='cols', r=0, btn='sq', img='mono',
+    nav='bar', hero='doors', secs=['gallery', 'follow', 'stats:fld-1', 'reviews', 'contact'], foot='cols', r=0, btn='sq', img='mono',
     biz=dict(name='Quarter Immobilier', short='Quarter', city='Nice', area=['Vieux-Nice', 'Cimiez', 'Le Port', 'Mont Boron', 'Villefranche'], phone='+33 4 55 50 72 18', since=2004, owner='Antoine Roux', addr='12 rue de France, 06000 Nice', cur='€', uk=True),
     head=['Apartments', 'by the sea.'], sub='Sales and rentals across Nice, from old-town studios to villas on the hill.')
 # photography
@@ -744,7 +745,7 @@ tpl(id='petalfall', name='Petalfall', cat='florist', moods=['playful', 'warm'], 
     biz=dict(name='Petalfall Flowers', short='Petalfall', city='Nantes', area=['Bouffay', 'Graslin', 'Île de Nantes', 'Chantenay', 'Rezé'], phone='+33 2 55 50 84 17', since=2016, owner='Margaux Leroy', addr='8 rue Crébillon, Nantes', cur='€', uk=True),
     head=['Flowers that', 'feel like *spring.*'], sub='Loose, seasonal bouquets delivered across Nantes the same day.')
 tpl(id='thicket', name='Thicket', cat='florist', moods=['dark', 'calm'], pal='green-black-bone', font='gambarino-general', fx=['glow', 'magnet', 'curtain', 'cursor'],
-    nav='center', hero='terrain', secs=['follow', 'menu', 'gallery', 'visit'], foot='cols', r=0, btn='sq',
+    nav='center', hero='mosaic', secs=['follow', 'menu', 'gallery', 'visit'], foot='cols', r=0, btn='sq',
     biz=dict(name='Thicket Botanical', short='Thicket', city='Utrecht', area=['Oudwijk', 'Lombok', 'Wittevrouwen', 'Zuilen', 'Zeist'], phone='+31 30 555 0147', since=2014, owner='Femke de Groot', addr='Oudegracht 112, Utrecht', cur='€', uk=True),
     head=['Wild, green', 'and a little *dark.*'], sub='Plants, dried flowers and moody arrangements from a canal-side shop.')
 
@@ -778,24 +779,102 @@ for t in T:
 if errors:
     print('\n'.join(errors)); sys.exit(1)
 
-used = set()
+# ---------------------------------------------------------------- photos: every template keeps the ones it has
+# A template's photos only change if it needs more or fewer, or gets a new pin; new ones come from the unused pool.
+prev = {}
+try:
+    for line in read('data/templates.js').splitlines():
+        line = line.strip().rstrip(',')
+        if line.startswith('{"id"'):
+            o = json.loads(line); prev[o['id']] = o.get('photos', [])
+except Exception:
+    pass
 pinned = [i for t in T for i in t.get('pin', [])]
 dupe = {i for i in pinned if pinned.count(i) > 1}
 if dupe:
     print('pinned twice:', dupe); sys.exit(1)
-used |= set(pinned)
-short = []
+used = set(pinned)
 for t in T:
     n = need(t)
-    got = list(t.get('pin', []))
-    for s in t.get('sets') or (SETS[t['cat']] + FALLBACK):
-        for pid in BY_SET.get(s, []):
+    pins = list(t.get('pin', []))
+    keep = pins + [i for i in prev.get(t['id'], []) if i not in pins and i not in pinned]
+    t['photos'] = keep[:n]
+    used |= set(t['photos'])
+short = []
+for t in T:
+    n, got = need(t), t['photos']
+    for st in t.get('sets') or (SETS[t['cat']] + FALLBACK):
+        for pid in BY_SET.get(st, []):
             if len(got) >= n: break
             if pid not in used:
                 got.append(pid); used.add(pid)
     if len(got) < n: short.append(f'{t["id"]}: {len(got)}/{n} photos')
-    t['photos'] = got[:n]
     t.pop('pin', None); t.pop('sets', None)
+
+# ---------------------------------------------------------------- motion styles: no two templates move alike
+# Each template gets one value per axis (kit/motion.css). Headings, photos, easing and buttons are drawn from
+# what suits its moods; every axis is spread evenly, and templates for the same kind of business never share
+# a heading or photo style.
+import zlib
+from collections import Counter
+AXES = {
+    'h': ['rise', 'drop', 'fade', 'wipe', 'tilt', 'zoom', 'slide', 'flip', 'words', 'chars'],
+    'p': ['top', 'down', 'side', 'doors', 'iris', 'fade', 'corner', 'pill'],
+    'l': ['up', 'left', 'scale', 'flip', 'fade', 'alt'],
+    't': ['up', 'fade', 'right', 'blur'],
+    'b': ['arrow', 'fill', 'invert', 'grow', 'hard', 'morph'],
+    'r': ['indent', 'wash', 'dim', 'accent', 'line'],
+    'g': ['fill', 'lift', 'ring', 'soft'],
+    'n': ['line', 'dim', 'pill'],
+    'e': ['out', 'spring', 'smooth', 'swift'],
+}
+SUITS = {
+    'h': dict(calm=['fade', 'rise', 'zoom', 'words'], luxe=['fade', 'words', 'wipe', 'zoom', 'chars'], minimal=['rise', 'wipe', 'fade', 'slide'],
+              bold=['drop', 'tilt', 'wipe', 'flip', 'chars', 'slide'], playful=['tilt', 'flip', 'words', 'chars', 'drop'], warm=['rise', 'words', 'fade', 'slide'],
+              dark=['wipe', 'zoom', 'chars', 'fade'], classic=['rise', 'fade', 'words', 'wipe'], fresh=['slide', 'rise', 'words', 'drop']),
+    'p': dict(calm=['fade', 'top', 'pill', 'iris'], luxe=['doors', 'fade', 'iris', 'top'], minimal=['top', 'side', 'down', 'corner'], bold=['side', 'corner', 'down', 'doors'],
+              playful=['pill', 'iris', 'corner', 'down'], warm=['top', 'fade', 'pill', 'down'], dark=['iris', 'doors', 'side', 'fade'], classic=['top', 'down', 'fade', 'doors'],
+              fresh=['side', 'pill', 'down', 'corner']),
+    'e': dict(calm=['smooth', 'out'], luxe=['smooth', 'swift'], minimal=['swift', 'out'], bold=['swift', 'out'], playful=['spring'], warm=['out', 'smooth'],
+              dark=['swift', 'smooth'], classic=['out', 'smooth'], fresh=['spring', 'out']),
+    'b': dict(calm=['arrow', 'morph', 'fill'], luxe=['fill', 'invert', 'arrow'], minimal=['arrow', 'invert', 'fill'], bold=['hard', 'fill', 'invert'],
+              playful=['grow', 'morph', 'hard'], warm=['arrow', 'grow', 'morph'], dark=['invert', 'fill', 'arrow'], classic=['arrow', 'fill', 'invert'],
+              fresh=['grow', 'morph', 'arrow']),
+}
+count = {k: Counter() for k in AXES}
+bycat = Counter()
+seen = set()
+for t in T:
+    fx = t.get('fx', [])
+    m = {}
+    for k, vals in AXES.items():
+        pool = vals
+        if k in SUITS:
+            pool = [v for v in vals if any(v in SUITS[k].get(mood, []) for mood in t['moods'])] or vals
+        cost = lambda v: count[k][v] + 100 * bycat[(t['cat'], k, v)] * (k in 'hp') + (zlib.crc32(f"{t['id']}{k}{v}".encode()) % 97) / 1000
+        m[k] = min(pool, key=cost)
+    # the whole combination must be new: nudge the free axes until it is
+    for v in AXES['n'] + AXES['t']:
+        if tuple(m.values()) not in seen: break
+        m['n' if v in AXES['n'] else 't'] = v
+    seen.add(tuple(m.values()))
+    for k, v in m.items():
+        count[k][v] += 1; bycat[(t['cat'], k, v)] += 1
+    t['m'] = m
+    if 'chars' in fx: t['fx'] = [f for f in fx if f != 'chars']
+# reviews and process sections come in three layouts each
+kr = kp = 0
+for t in T:
+    if 'reviews' in t['secs']:
+        v = [None, 'grid', 'drag'][kr % 3]; kr += 1
+        if v: t['rv'] = v
+    if 'process' in t['secs']:
+        v = [None, 'rows', 'cards'][kp % 3]; kp += 1
+        if v: t['ps'] = v
+if len(seen) != len(T): print('WARNING: repeated motion combinations:', len(T) - len(seen))
+print('headings:', dict(count['h'])); print('photos:', dict(count['p']))
+live = [(t['hero'], tuple(sorted(t.get('fx', []))), tuple(x.split(':')[0] for x in t['secs'])) for t in T if t.get('fx')]
+print('interactive templates:', len(live), '| openings:', dict(Counter(h for h, _, _ in live)), '| identical set-ups:', len(live) - len(set(live)))
 
 with io.open(os.path.join(SITE, 'data', 'templates.js'), 'w', encoding='utf-8', newline='\n') as f:
     f.write('// Studio templates. Generated by tools/studio/templates.py: edit there, not here.\n')

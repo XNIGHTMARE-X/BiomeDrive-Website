@@ -13,8 +13,9 @@
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="preconnect" href="https://picsum.photos">
 <link rel="preconnect" href="https://fastly.picsum.photos">
-<link rel="stylesheet" href="/studio/kit/kit.css?v=17">
-<link rel="stylesheet" href="/studio/kit/fx.css?v=17">
+<link rel="stylesheet" href="/studio/kit/kit.css?v=20">
+<link rel="stylesheet" href="/studio/kit/fx.css?v=20">
+<link rel="stylesheet" href="/studio/kit/motion.css?v=20">
 <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -22,9 +23,9 @@
 <script src="/js/vendor/lenis.min.js"></script>
 <script src="/js/vendor/motion.js"></script>
 <script type="module">
-  import { TEMPLATES } from '/studio/data/templates.js?v=17';
-  import { render, dress, animate, findPalette, findFont, applyPalette, applyFont } from '/studio/kit/kit.js?v=17';
-  import { prepare, run } from '/studio/kit/fx.js?v=17';
+  import { TEMPLATES } from '/studio/data/templates.js?v=20';
+  import { render, dress, animate, findPalette, findFont, applyPalette, applyFont } from '/studio/kit/kit.js?v=20';
+  import { prepare, run } from '/studio/kit/fx.js?v=20';
 
   const q = new URLSearchParams(location.search);
   const t = TEMPLATES.find(x => x.id === q.get('t')) || TEMPLATES[0];

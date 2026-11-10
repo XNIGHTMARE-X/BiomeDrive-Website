@@ -12,7 +12,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const [base, out, only] = process.argv.slice(2);
 mkdirSync(out, { recursive: true });
 const { TEMPLATES } = await import(pathToFileURL(join(here, '../../site/studio/data/templates.js')).href);
-const list = TEMPLATES.filter(t => (only ? only.split(',').includes(t.id) : t.fx && t.fx.length));
+const list = TEMPLATES.filter(t => (only === 'all' ? true : only === 'still' ? !(t.fx && t.fx.length) : only ? only.split(',').includes(t.id) : t.fx && t.fx.length));
 const W = 1440, H = 900;
 const port = 9100 + Math.floor(Math.random() * 150);
 const chrome = spawn('C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'fxc-'))}`, '--hide-scrollbars', '--enable-unsafe-swiftshader', '--use-angle=swiftshader', `--window-size=${W},${H}`, 'about:blank']);
@@ -40,7 +40,13 @@ for (const t of list) {
   const top = await ev(`(() => {
     const q = s => document.querySelector(s), r = {};
     r.loaderGone = !q('.ldr');
-    r.chars = document.querySelectorAll('.hero .ch').length;
+    r.chars = document.querySelectorAll('.hero .ch').length; r.words = document.querySelectorAll('.wv').length;
+    r.lens = q('.ls.top') ? parseFloat(q('.ls.top').style.getPropertyValue('--lr')) || 0 : null;
+    r.dotsInk = (() => { const c = q('[data-dots]'); if (!c) return null; const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 3; i < d.length; i += 4 * 53) if (d[i] > 10) n++; return n; })();
+    r.wall = q('.tw2-track') ? q('.tw2-track').style.transform : null;
+    r.drum = q('.drum-in') ? q('.drum-in').style.getPropertyValue('--rot') : null;
+    r.mosaic = q('[data-mosaic]') ? q('[data-mosaic]').classList.contains('in') : null;
+    r.hidden = [...document.querySelectorAll('.hero [data-r].in')].filter(e => { const c = getComputedStyle(e); return c.opacity === '0' || (e.dataset.r.startsWith('clip') && !['none', 'inset(0px)', 'inset(0px round 0px)', 'circle(75% at 50% 50%)'].includes(c.clipPath)); }).length;
     r.cursor = !!q('.cur-ring');
     r.topoInk = (() => { const c = q('[data-topo]'); if (!c) return null; const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 3; i < d.length; i += 4 * 97) if (d[i] > 10) n++; return n; })();
     r.liquidGL = q('[data-liquid]') ? q('[data-liquid]').classList.contains('gl') : null;
@@ -56,6 +62,7 @@ for (const t of list) {
     await ev(`(window.__lenis ? window.__lenis.scrollTo(${y}, { immediate: true, force: true }) : scrollTo(0, ${y}), 1)`);
     await sleep(110);
     const m = await ev(`(() => { const q = s => document.querySelector(s); return {
+      doors: q('[data-doors]') ? q('[data-doors]').style.getPropertyValue('--dp') : null,
       zoom: q('[data-zoom]') ? +q('[data-zoom]').style.getPropertyValue('--zw') : null,
       reel: q('.rl-track') ? q('.rl-track').style.transform : null,
       hs: q('.hs-track') ? q('.hs-track').style.transform : null,
@@ -70,8 +77,17 @@ for (const t of list) {
   const has = (sel) => ev(`!!document.querySelector('${sel}')`);
   const checks = [];
   const need = (ok, what) => { if (!ok) checks.push(what); };
+  t.fx = t.fx || [];
   if (t.fx.includes('loader')) need(top.loaderGone, 'preloader still up');
-  if (t.fx.includes('chars')) need(top.chars > 0, 'letters not split');
+  if (t.m.h === 'chars') need(top.chars > 0, 'letters not split');
+  if (t.m.h === 'words') need(top.words > 0, 'words not split');
+  need(top.hidden === 0, top.hidden + ' revealed hero parts still invisible');
+  if (t.hero === 'lens') need(top.lens > 40, 'lens closed');
+  if (t.hero === 'dots') need(top.dotsInk > 50, 'dots not drawn');
+  if (t.hero === 'typewall') need(!!top.wall, 'type wall idle');
+  if (t.hero === 'drum') need(Math.abs(parseFloat(top.drum)) > 1, 'drum not turning');
+  if (t.hero === 'mosaic') need(top.mosaic, 'mosaic not shown');
+  if (t.hero === 'doors') need((marks.doors?.size || 0) > 2, 'doors not opening');
   if (t.fx.includes('cursor')) need(top.cursor, 'no cursor');
   if (t.hero === 'terrain') need(top.topoInk > 20, `contours not drawn (${top.topoInk})`);
   if (t.hero === 'liquid') need(top.liquidGL, 'WebGL ripple not running');

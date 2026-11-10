@@ -29,7 +29,6 @@ function onScroll(el, offset, fn) {
 export function prepare(t, opts = {}) {
   const fx = new Set(t.fx || []);
   const still = calm || !!opts.shot;
-  if (fx.has('chars')) splitChars();
   let gate = Promise.resolve();
   let seen = false; try { seen = !!sessionStorage.getItem('bd-ldr-' + t.id); } catch (e) {}
   if (fx.has('loader') && !still && !seen) gate = loader(t);
@@ -111,6 +110,7 @@ export function run(t, opts = {}, state = {}) {
   heroZoom(still); reel('[data-hreel]', '.rl-track', still, true); reel('[data-hscroll]', '.hs-track', still, false);
   stackCards(still); pushLines(still); odometers(still); accordions(); follow(still);
   terrain(still); liquid(still); depth(still); slices(still); typewave(still, gate);
+  lens(still); dots(still); doors(still); typewall(still); drum(still); mosaic(still);
   if (!still) {
     if (fx.has('magnet') && fine) magnets();
     if (fx.has('tilt') && fine) tilts();
@@ -119,7 +119,7 @@ export function run(t, opts = {}, state = {}) {
     if (fx.has('scramble')) scramble();
   }
   let last = performance.now();
-  const loop = now => { const dt = Math.min(0.05, (now - last) / 1000); last = now; for (const f of tickers) f(dt, now); requestAnimationFrame(loop); };
+  const loop = now => { const dt = Math.min(0.05, (now - last) / 1000); last = now; for (const f of tickers) f(dt, now); pointer.vx *= 0.86; pointer.vy *= 0.86; requestAnimationFrame(loop); };
   requestAnimationFrame(loop);
 }
 
@@ -415,4 +415,113 @@ function scramble() {
       requestAnimationFrame(step);
     }).observe(h, { attributes: true, attributeFilter: ['class'] });
   });
+}
+
+/* =========================================================
+   More openings
+   ========================================================= */
+const cssColor = n => getComputedStyle(root).getPropertyValue(n).trim();
+
+/* ---------- lens ---------- */
+function lens(still) {
+  const h = document.querySelector('[data-lens]'); if (!h || still) return;
+  const top = h.querySelector('.ls.top');
+  let x = innerWidth * 0.7, y = innerHeight * 0.42, r = 0;
+  tickers.push((dt, now) => {
+    const b = h.getBoundingClientRect(); if (b.bottom < 0) return;
+    const auto = !(fine && pointer.has);
+    const tx = auto ? b.width * (0.5 + 0.3 * Math.cos(now / 1900)) : pointer.x - b.left;
+    const ty = auto ? b.height * (0.45 + 0.22 * Math.sin(now / 1500)) : pointer.y - b.top;
+    x = lerp(x, tx, 0.12); y = lerp(y, ty, 0.12);
+    r = lerp(r, 150 + Math.min(150, Math.hypot(pointer.vx, pointer.vy) * 4) + Math.sin(now / 700) * 8, 0.08);
+    top.style.setProperty('--lx', x.toFixed(1) + 'px'); top.style.setProperty('--ly', y.toFixed(1) + 'px'); top.style.setProperty('--lr', r.toFixed(1) + 'px');
+  });
+}
+
+/* ---------- dots ---------- */
+function dots(still) {
+  const cv = document.querySelector('[data-dots]'); if (!cv) return;
+  const ctx = cv.getContext('2d');
+  let W = 0, H = 0, d = 1, ink = '#000', acc = '#f00';
+  const colors = () => { ink = cssColor('--ink'); acc = cssColor('--accent'); };
+  const size = () => { d = Math.min(1.5, devicePixelRatio || 1); W = cv.offsetWidth; H = cv.offsetHeight; cv.width = Math.round(W * d); cv.height = Math.round(H * d); };
+  colors(); size(); addEventListener('resize', size);
+  new MutationObserver(colors).observe(root, { attributes: true, attributeFilter: ['style'] });
+  const GAP = 30, R = 180;
+  const draw = now => {
+    const b = cv.getBoundingClientRect(), px = pointer.has ? pointer.x - b.left : -999, py = pointer.has ? pointer.y - b.top : -999;
+    ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, W, H);
+    const hot = [];
+    ctx.fillStyle = ink; ctx.globalAlpha = 0.3; ctx.beginPath();
+    for (let j = 0, y = GAP / 2; y < H; y += GAP, j++) for (let i = 0, x = GAP / 2; x < W; x += GAP, i++) {
+      const dx = x - px, dy = y - py, dist = Math.hypot(dx, dy);
+      if (dist < R) { const k = 1 - dist / R; hot.push([x + (dx / (dist || 1)) * k * k * 26, y + (dy / (dist || 1)) * k * k * 26, 1.5 + k * 3.4, k]); continue; }
+      const rad = 1.4 + Math.sin(now / 900 + (i + j) * 0.45) * 0.55;
+      ctx.moveTo(x + rad, y); ctx.arc(x, y, rad, 0, 6.2832);
+    }
+    ctx.fill();
+    ctx.fillStyle = acc;
+    for (const [x, y, rad, k] of hot) { ctx.globalAlpha = 0.35 + k * 0.65; ctx.beginPath(); ctx.arc(x, y, rad, 0, 6.2832); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  };
+  if (still) return draw(0);
+  let on = true; new IntersectionObserver(es => (on = es[0].isIntersecting)).observe(cv);
+  tickers.push((dt, now) => { if (on) draw(now); });
+}
+
+/* ---------- doors ---------- */
+function doors(still) {
+  const sec = document.querySelector('[data-doors]'); if (!sec || still) return;
+  onScroll(sec, ['start start', 'end end'], p => sec.style.setProperty('--dp', ease(clamp(p / 0.75)).toFixed(4)));
+}
+
+/* ---------- type wall ---------- */
+function typewall(still) {
+  const sec = document.querySelector('[data-typewall]'); if (!sec) return;
+  const rows = $$('.tw2-row', sec).map((row, k) => ({ tr: row.firstElementChild, dir: +row.dataset.dir, x: -k * 140 }));
+  if (still) return rows.forEach(r => (r.tr.style.transform = `translate3d(${r.x}px, 0, 0)`));
+  let lastY = scrollY;
+  tickers.push(dt => {
+    const v = window.__lenis ? window.__lenis.velocity : scrollY - lastY; lastY = scrollY;
+    const lean = fine && pointer.has ? (pointer.x / innerWidth - 0.5) * 90 : 0;
+    rows.forEach(r => {
+      const period = r.tr.scrollWidth / 2 || 1;
+      r.x -= (38 + Math.abs(v) * 24 + lean * r.dir) * r.dir * dt;
+      if (r.x <= -period) r.x += period; if (r.x > 0) r.x -= period;
+      r.tr.style.transform = `translate3d(${r.x.toFixed(1)}px, 0, 0)`;
+    });
+  });
+}
+
+/* ---------- drum ---------- */
+function drum(still) {
+  const box = document.querySelector('[data-drum]'); if (!box) return;
+  const inner = box.firstElementChild, faces = $$('.df', box);
+  let rot = 0, vel = 0, drag = false, ly = 0, lastY = scrollY;
+  const paint = () => {
+    inner.style.setProperty('--rot', rot.toFixed(2));
+    faces.forEach((f, i) => { const a = (((rot - i * 30) % 360) + 540) % 360 - 180, c = Math.cos(a * Math.PI / 180); f.style.setProperty('--o', (c > 0 ? 0.1 + c * c * 0.9 : 0).toFixed(3)); f.classList.toggle('on', Math.abs(a) < 15); });
+  };
+  paint(); if (still) return;
+  box.addEventListener('pointerdown', e => { drag = true; ly = e.clientY; box.setPointerCapture(e.pointerId); });
+  box.addEventListener('pointermove', e => { if (!drag) return; const dy = e.clientY - ly; ly = e.clientY; rot -= dy * 0.5; vel = -dy * 30; });
+  const end = () => (drag = false); box.addEventListener('pointerup', end); box.addEventListener('pointercancel', end);
+  tickers.push(dt => {
+    const v = window.__lenis ? window.__lenis.velocity : scrollY - lastY; lastY = scrollY;
+    if (!drag) { vel = lerp(vel, 16 + v * 14, 0.06); rot += vel * dt; }
+    paint();
+  });
+}
+
+/* ---------- mosaic ---------- */
+function mosaic(still) {
+  const box = document.querySelector('[data-mosaic]'); if (!box || still) return;
+  const tiles = $$('.mz', box);
+  // now and then a few tiles turn over on their own
+  setInterval(() => {
+    if (!box.classList.contains('done') || document.hidden) return;
+    const r = box.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+    const start = (Math.random() * tiles.length) | 0;
+    [0, 1, 7].forEach((o, n) => { const t = tiles[(start + o) % tiles.length]; setTimeout(() => { t.classList.add('fl'); setTimeout(() => t.classList.remove('fl'), 1300); }, n * 140); });
+  }, 2600);
 }

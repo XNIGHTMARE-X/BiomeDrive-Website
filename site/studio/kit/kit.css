@@ -609,7 +609,7 @@ ul, ol { list-style: none; }
 .js [data-r="zoom"]:not(.in) img { transform: scale(1.12); opacity: 0; }
 .js [data-r="lines"] .ln > span { transition: transform calc(1.05s * var(--t)) var(--ease); transition-delay: calc((var(--i, 0) * 90ms + var(--l, 0) * 110ms) * var(--t)); }
 .js [data-r="lines"]:not(.in) .ln > span { transform: translateY(140%); }
-.js [data-r="list"] > * { transition: opacity calc(.8s * var(--t)) var(--ease), transform calc(.8s * var(--t)) var(--ease); transition-delay: calc(var(--j, 0) * 70ms * var(--t)); }
+.js [data-r="list"]:not(.done) > * { transition: opacity calc(.8s * var(--t)) var(--ease), transform calc(.8s * var(--t)) var(--ease); transition-delay: calc(var(--j, 0) * 70ms * var(--t)); }
 .js [data-r="list"]:not(.in) > * { opacity: 0; transform: translateY(18px); }
 .js [data-r="tilt"] { transition-duration: calc(1.2s * var(--t)); }
 .js [data-r="tilt"]:not(.in) { opacity: 0; transform: translateY(60px) rotate(0deg) !important; }

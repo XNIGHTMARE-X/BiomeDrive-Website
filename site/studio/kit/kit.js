@@ -1,11 +1,11 @@
 // BiomeDrive Studio: the template engine. Turns one template definition (data/templates.js)
 // into a full page: nav, hero, sections and footer, dressed by a palette and a type pairing.
 // Used by studio/view/ (which the Studio shows in an iframe) and by the thumbnail tool.
-import { PALETTES } from '../data/palettes.js?v=17';
-import { FONTS } from '../data/fonts.js?v=17';
-import { PHOTOS, PHOTO_URL } from '../data/photos.js?v=17';
-import { CATS } from '../data/content.js?v=17';
-import { icon } from './icons.js?v=17';
+import { PALETTES } from '../data/palettes.js?v=20';
+import { FONTS } from '../data/fonts.js?v=20';
+import { PHOTOS, PHOTO_URL } from '../data/photos.js?v=20';
+import { CATS } from '../data/content.js?v=20';
+import { icon } from './icons.js?v=20';
 
 const ALT = Object.fromEntries(PHOTOS.map(p => [p.id, p.alt]));
 const YEAR = new Date().getFullYear();
@@ -162,7 +162,7 @@ function mapSvg(x, seed) {
 /* ---------------- nav ---------------- */
 const LINKS = { hscroll: 'Services', stack: 'Services', accordion: 'Services', follow: 'Services', services: 'Services', menu: 'Menu', about: 'About', reviews: 'Reviews', quote: 'Reviews', area: 'Areas', prices: 'Prices', gallery: 'Work', listings: 'Homes', visit: 'Visit', faq: 'FAQ', team: 'Team', book: 'Book', contact: 'Contact', process: 'How it works' };
 const IDS = { hscroll: 'services', stack: 'services', accordion: 'services', follow: 'services', quote: 'reviews', gallery: 'work', listings: 'work', process: 'how', servicesGrid: 'services' };
-const OVER = new Set(['cover', 'card', 'liquid', 'zoom']);
+const OVER = new Set(['cover', 'card', 'liquid', 'zoom', 'doors']);
 function nav(x) {
   const { t, C, b } = x;
   const keys = t.secs.map(s => (s === 'servicesGrid' ? 'services' : s)).filter(s => LINKS[s]);
@@ -445,6 +445,52 @@ const HERO = {
   ${pics}
 </div></div></section>`;
   },
+  lens(x) {
+    const { t, C } = x;
+    const words = top => `<div class="wrap ls-words"><p class="h-lede">${icon(C.icon)}${esc(x.fill(t.lede || `${C.label} in {city} since {since}`))}</p>${top ? `<p class="d hl">${lines(t.head, x)}</p>` : `<h1 class="d hl" data-r="lines">${lines(t.head, x)}</h1>`}<p class="h-sub">${esc(x.fill(t.sub))}</p><div class="acts">${x.b1()}${x.b2()}</div></div>`;
+    return `<section class="hero h-lens" id="top" data-lens><div class="ls base">${words(false)}</div><div class="ls top" aria-hidden="true" inert>${photo(x, null, 2000, 'fill', 'eager')}<div class="ls-scrim"></div>${words(true)}</div><p class="ls-hint" aria-hidden="true">Move your mouse</p></section>`;
+  },
+  dots(x) {
+    const { t, C } = x;
+    return `<section class="hero h-terrain h-dots" id="top"><canvas class="topo" data-dots aria-hidden="true"></canvas>
+  <div class="wrap tr-in"><p class="h-lede" data-r="up">${icon(C.icon)}${esc(x.fill(t.lede || `${C.label} in {city} since {since}`))}</p><h1 class="d hl" data-r="lines" style="--i:1">${lines(t.head, x)}</h1>
+  <div class="row" data-r="up" style="--i:3"><p class="h-sub">${esc(x.fill(t.sub))}</p><div class="acts">${x.b1()}${x.b2()}</div></div></div>
+</section>`;
+  },
+  doors(x) {
+    const { t, C, b } = x;
+    const id = x.nextPhoto(), url = id == null ? '' : PHOTO_URL(id, 2000, 1250);
+    const door = side => `<div class="dr-door ${side}"><div class="dr-face" style="background-image:url('${url}')"><span class="d dr-name" data-fit>${esc(b.short)}</span></div></div>`;
+    return `<section class="hero h-doors" id="top" data-doors><div class="dr-stick">
+  <div class="wrap dr-in"><p class="h-lede">${icon(C.icon)}${esc(x.fill(t.lede || `${C.label} in {city} since {since}`))}</p><h1 class="d hl">${lines(t.head, x)}</h1><div class="row"><p class="h-sub">${esc(x.fill(t.sub))}</p><div class="acts">${x.b1()}${x.b2()}</div></div></div>
+  ${door('l')}${door('r')}<p class="zm-hint dr-hint" aria-hidden="true">Scroll</p>
+</div></section>`;
+  },
+  typewall(x) {
+    const { t, C } = x;
+    const names = C.services.map(z => x.fill(z.n));
+    const row = k => { const seq = [...names.slice(k % names.length), ...names.slice(0, k % names.length)].map(n => `<span>${esc(n)}</span>`).join(''); return `<div class="tw2-row${k === 2 ? ' hot' : ''}" data-dir="${k % 2 ? -1 : 1}"><div class="tw2-track d">${seq}${seq}</div></div>`; };
+    return `<section class="hero h-wall" id="top" data-typewall><div class="tw2" aria-hidden="true">${[0, 1, 2, 3, 4].map(row).join('')}</div>
+  <div class="wrap tw2-in"><div class="tw2-card"><p class="h-lede" data-r="up">${icon(C.icon)}${esc(x.fill(t.lede || `${C.label} in {city} since {since}`))}</p><h1 class="d hl" data-r="lines" style="--i:1">${lines(t.head, x)}</h1><p class="h-sub" data-r="up" style="--i:3">${esc(x.fill(t.sub))}</p><div class="acts" data-r="up" style="--i:4">${x.b1()}${x.b2()}</div></div></div>
+</section>`;
+  },
+  drum(x) {
+    const { t, C } = x;
+    const names = C.services.map(z => x.fill(z.n)), faces = [...names, ...names].slice(0, 12);
+    return `<section class="hero h-drum" id="top"><div class="wrap grid">
+  <div class="copy"><p class="h-lede" data-r="up">${icon(C.icon)}${esc(x.fill(t.lede || `${C.label} in {city} since {since}`))}</p><h1 class="d hl" data-r="lines" style="--i:1">${lines(t.head, x)}</h1><p class="h-sub" data-r="up" style="--i:3">${esc(x.fill(t.sub))}</p><div class="acts" data-r="up" style="--i:4">${x.b1()}${x.b2()}</div></div>
+  <div class="drum" data-drum aria-hidden="true"><div class="drum-in d">${faces.map((n, i) => `<span class="df" style="--a:${i}">${esc(n)}</span>`).join('')}</div></div>
+</div></section>`;
+  },
+  mosaic(x) {
+    const { t, C } = x;
+    const id = x.nextPhoto(), url = id == null ? '' : PHOTO_URL(id, 1400, 1100), cols = 6, rows = 5;
+    const tiles = Array.from({ length: cols * rows }, (_, i) => { const c = i % cols, r = (i / cols) | 0; return `<span class="mz" style="--c:${c};--r:${r}"><i style="background-image:url('${url}')"></i><b>${(c + r * 2) % 5 === 0 ? icon(C.icon) : ''}</b></span>`; }).join('');
+    return `<section class="hero h-slices h-mosaic" id="top"><div class="wrap grid">
+  <div class="copy"><p class="h-lede" data-r="up">${icon(C.icon)}${esc(x.fill(t.lede || `${C.label} in {city} since {since}`))}</p><h1 class="d hl" data-r="lines" style="--i:1">${lines(t.head, x)}</h1><p class="h-sub" data-r="up" style="--i:3">${esc(x.fill(t.sub))}</p><div class="acts" data-r="up" style="--i:4">${x.b1()}${x.b2()}</div></div>
+  <div class="mosaic" data-mosaic data-r="in" style="--cols:${cols};--rows:${rows}" role="img" aria-label="${esc(ALT[id] || '')}">${tiles}</div>
+</div></section>`;
+  },
   stack(x) {
     const { t } = x;
     return `<section class="hero h-stack" id="top"><div class="wrap">
@@ -493,7 +539,10 @@ const SEC = {
     const { C } = x;
     const card = (r, i) => `<article class="rv"><p>“${esc(r.q)}”</p><footer><b>${esc(r.who)}</b><span>${esc(x.town(i))}</span></footer></article>`;
     const a = x.reviews.slice(0, 3).map(card).join(''), bb = x.reviews.slice(3).map((r, i) => card(r, i + 3)).join('');
-    return `<section class="sec reviews" id="reviews"><div class="wrap sec-top">${head('reviews', x)}<div class="rv-score" data-r="up"><span class="big">${x.rate.v}</span><span><span class="stars">★★★★★</span><br><small class="mute">${esc(x.fill(x.rate.l))}</small></span></div></div>
+    const top = `<div class="wrap sec-top">${head('reviews', x)}<div class="rv-score" data-r="up"><span class="big">${x.rate.v}</span><span><span class="stars">★★★★★</span><br><small class="mute">${esc(x.fill(x.rate.l))}</small></span></div></div>`;
+    if (x.t.rv === 'grid') return `<section class="sec reviews" id="reviews">${top}<div class="wrap"><div class="rv-grid" data-r="list">${a}</div></div></section>`;
+    if (x.t.rv === 'drag') return `<section class="sec reviews" id="reviews">${top}<div class="rv-drag" data-drag data-r="list">${a}${bb}</div></section>`;
+    return `<section class="sec reviews" id="reviews">${top}
   <div class="rv-rows"><div class="mq"><div class="mq-track" data-copies="3" style="--mq:64s">${a}${a.replace(/<article/g, '<article aria-hidden="true"')}${a.replace(/<article/g, '<article aria-hidden="true"')}</div></div><div class="mq rev"><div class="mq-track" data-copies="3" style="--mq:74s">${bb}${bb.replace(/<article/g, '<article aria-hidden="true"')}${bb.replace(/<article/g, '<article aria-hidden="true"')}</div></div></div>
 </section>`;
   },
@@ -506,7 +555,7 @@ const SEC = {
   },
   process(x) {
     return `<section class="sec process" id="how"><div class="wrap"><div class="sec-top">${head('process', x)}</div>
-  <ol class="steps" data-r="in">${x.C.steps.map((s, i) => `<li style="--i:${i}"><h3>${esc(s.n)}</h3><p>${esc(x.fill(s.d))}</p></li>`).join('')}</ol>
+  <ol class="steps${x.t.ps ? ' v-' + x.t.ps : ''}" data-r="${x.t.ps ? 'list' : 'in'}">${x.C.steps.map((s, i) => `<li style="--i:${i}"><h3>${esc(s.n)}</h3><p>${esc(x.fill(s.d))}</p></li>`).join('')}</ol>
 </div></section>`;
   },
   area(x) {
@@ -687,6 +736,10 @@ export function dress(t, opts = {}) {
   root.style.setProperty('--t', t.motion === 'calm' ? 1.25 : t.motion === 'lively' ? 0.85 : 1);
   root.dataset.img = t.img || 'color';
   root.dataset.fx = (t.fx || []).join(' ');
+  const m = t.m || {};
+  for (const k of 'hpltbrgn') root.dataset['m' + k] = m[k] || '';
+  const EASE = { spring: 'cubic-bezier(.34, 1.36, .5, 1)', smooth: 'cubic-bezier(.4, 0, .2, 1)', swift: 'cubic-bezier(.16, 1, .3, 1)' };
+  if (EASE[m.e]) root.style.setProperty('--ease', EASE[m.e]);
   root.classList.toggle('has-util', t.nav === 'util');
   document.title = `${t.biz.name} · ${t.name} template · BiomeDrive Studio`;
 }
@@ -699,6 +752,27 @@ export function animate(opts = {}) {
   if (opts.shot) root.classList.add('shot');
   if (calm) root.classList.add('calm');
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+
+  // headings that arrive word by word, or letter by letter in the hero
+  const mh = root.dataset.mh;
+  if (mh === 'words' || mh === 'chars') $$('[data-r="lines"] .ln > span, .ls.top .hl .ln > span').forEach(span => {
+    const letters = mh === 'chars' && !!span.closest('.hero'); let c = 0;
+    const walk = node => [...node.childNodes].forEach(n => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(part => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) return frag.appendChild(document.createTextNode(part));
+          const w = document.createElement('span');
+          if (letters) { w.className = 'wn'; for (const ch of part) { const l = document.createElement('span'); l.className = 'ch'; l.style.setProperty('--c', c++); l.textContent = ch; w.appendChild(l); } }
+          else { w.className = 'wv'; w.style.setProperty('--c', c++); w.textContent = part; }
+          frag.appendChild(w);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && !n.matches('.tick, .pill, .ph, svg')) walk(n);
+    });
+    walk(span);
+  });
 
   // fit giant words to their row
   const fit = () => $$('[data-fit]').forEach(el => {
@@ -725,7 +799,7 @@ export function animate(opts = {}) {
     requestAnimationFrame(step);
   };
 
-  const show = el => { el.classList.add('in'); $$('[data-count]', el).forEach(count); if (el.matches('[data-count]')) count(el); };
+  const show = el => { el.classList.add('in'); setTimeout(() => el.classList.add('done'), 2400); $$('[data-count]', el).forEach(count); if (el.matches('[data-count]')) count(el); };
   const start = () => {
     if (opts.shot || calm) { $$('[data-r]').forEach(el => el.classList.add('in')); return; }
     const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && e.intersectionRatio > 0) { show(e.target); io.unobserve(e.target); } }), { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });

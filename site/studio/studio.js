@@ -1,9 +1,9 @@
 // BiomeDrive · Studio page: the drifting wall, filters and cards, the template viewer and the colour lab.
 // Templates render inside an iframe (studio/view/); this page only sends it a palette or a font.
-import { TEMPLATES } from './data/templates.js?v=17';
-import { PALETTES } from './data/palettes.js?v=17';
-import { FONTS } from './data/fonts.js?v=17';
-import { CATS, GROUPS, MOODS } from './data/content.js?v=17';
+import { TEMPLATES } from './data/templates.js?v=20';
+import { PALETTES } from './data/palettes.js?v=20';
+import { FONTS } from './data/fonts.js?v=20';
+import { CATS, GROUPS, MOODS } from './data/content.js?v=20';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
