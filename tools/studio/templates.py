@@ -19,7 +19,13 @@ HEROES = {'split': 1, 'monument': 1, 'cover': 1, 'poster': 0, 'rescue': 1, 'arch
           'collage': 3, 'menu': 1, 'numbers': 1, 'spotlight': 1, 'map': 0, 'compare': 1, 'stack': 1,
           'splitR': 1, 'card': 1, 'ticker': 1, 'index': 3, 'banner': 1,
           'zoom': 1, 'terrain': 0, 'liquid': 1, 'depth': 2, 'slices': 1, 'typewave': 0, 'reel': 3,
-          'lens': 1, 'dots': 0, 'doors': 1, 'typewall': 0, 'drum': 0, 'mosaic': 1}
+          'lens': 1, 'dots': 0, 'doors': 1, 'typewall': 0, 'drum': 0, 'mosaic': 1,
+          # signature openings (kit/sig.js): one template each
+          'switch': 0, 'gauge': 0, 'blueprint': 0, 'estimator': 0, 'wipe': 1, 'swatches': 0, 'scribble': 1, 'level': 0,
+          'route': 0, 'boxes': 0, 'tacho': 0, 'card3d': 0, 'slot': 0, 'clock': 0, 'typewriter': 1, 'deck': 0, 'goo': 0,
+          'glitch': 0, 'morph': 1, 'carousel3d': 3, 'flap': 0, 'dock': 0, 'wave': 0, 'breathe': 0, 'bubbles': 0, 'pulse': 0,
+          'orbit': 0, 'balance': 0, 'particles': 0, 'chart': 0, 'receipt': 0, 'throughtext': 1, 'horizon': 0, 'shutter': 1,
+          'polaroids': 3, 'petals': 0, 'grow': 0}
 SECTIONS = {'trust': 0, 'services': 0, 'servicesGrid': 0, 'about': 1, 'stats': 0, 'reviews': 0, 'quote': 0, 'process': 0,
             'area': 0, 'faq': 0, 'cta': 0, 'statement': 0, 'gallery': 3, 'prices': 0, 'menu': 0, 'visit': 0, 'team': 0,
             'book': 0, 'contact': 0, 'feature': 1, 'bigband': 0,
@@ -749,6 +755,27 @@ tpl(id='thicket', name='Thicket', cat='florist', moods=['dark', 'calm'], pal='gr
     biz=dict(name='Thicket Botanical', short='Thicket', city='Utrecht', area=['Oudwijk', 'Lombok', 'Wittevrouwen', 'Zuilen', 'Zeist'], phone='+31 30 555 0147', since=2014, owner='Femke de Groot', addr='Oudegracht 112, Utrecht', cur='€', uk=True),
     head=['Wild, green', 'and a little *dark.*'], sub='Plants, dried flowers and moody arrangements from a canal-side shop.')
 
+
+# ---------------------------------------------------------------- one opening each
+# Every interactive template opens with an interaction no other template has, taken from its own trade.
+SIGNATURE = {
+    'undercurrent': 'liquid', 'pipeworks': 'typewave', 'arc': 'switch', 'ohm': 'slices', 'thermal': 'gauge', 'draft': 'depth',
+    'apex': 'reel', 'gable': 'doors', 'monolith': 'blueprint', 'rafter': 'estimator', 'canopy': 'terrain', 'grove': 'lens',
+    'shine': 'typewall', 'pristine': 'wipe', 'pigment': 'swatches', 'brushwork': 'scribble', 'fixit': 'drum', 'level': 'level',
+    'transit': 'route', 'nomad': 'boxes', 'redline': 'tacho', 'lacquer': 'card3d', 'smokesalt': 'zoom', 'verde': 'slot',
+    'drip': 'clock', 'ritual': 'typewriter', 'rise': 'deck', 'flourfold': 'mosaic', 'afterhours': 'goo', 'static': 'glitch',
+    'muse': 'morph', 'halo': 'carousel3d', 'steel': 'flap', 'lineup': 'dock', 'salt': 'wave', 'hush': 'breathe',
+    'enamel': 'dots', 'grin': 'bubbles', 'momentum': 'pulse', 'core': 'orbit', 'grayholt': 'balance', 'atlas': 'particles',
+    'balance': 'chart', 'sum': 'receipt', 'vista': 'throughtext', 'quarter': 'horizon', 'exposure': 'shutter',
+    'grainstudio': 'polaroids', 'petalfall': 'petals', 'thicket': 'grow',
+}
+assert len(set(SIGNATURE.values())) == len(SIGNATURE) == 50
+_ids = {t['id'] for t in T}
+assert not (set(SIGNATURE) - _ids), set(SIGNATURE) - _ids
+for t in T:
+    if t['id'] in SIGNATURE: t['hero'] = SIGNATURE[t['id']]
+_plain = {t['hero'] for t in T if t['id'] not in SIGNATURE}
+assert not (_plain & set(SIGNATURE.values())), _plain & set(SIGNATURE.values())
 
 # ---------------------------------------------------------------- checks and photos
 def need(t):

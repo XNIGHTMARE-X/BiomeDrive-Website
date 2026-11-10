@@ -1,11 +1,11 @@
 // BiomeDrive Studio: the template engine. Turns one template definition (data/templates.js)
 // into a full page: nav, hero, sections and footer, dressed by a palette and a type pairing.
 // Used by studio/view/ (which the Studio shows in an iframe) and by the thumbnail tool.
-import { PALETTES } from '../data/palettes.js?v=20';
-import { FONTS } from '../data/fonts.js?v=20';
-import { PHOTOS, PHOTO_URL } from '../data/photos.js?v=20';
-import { CATS } from '../data/content.js?v=20';
-import { icon } from './icons.js?v=20';
+import { PALETTES } from '../data/palettes.js?v=21';
+import { FONTS } from '../data/fonts.js?v=21';
+import { PHOTOS, PHOTO_URL } from '../data/photos.js?v=21';
+import { CATS } from '../data/content.js?v=21';
+import { icon } from './icons.js?v=21';
 
 const ALT = Object.fromEntries(PHOTOS.map(p => [p.id, p.alt]));
 const YEAR = new Date().getFullYear();
@@ -934,3 +934,7 @@ export function animate(opts = {}) {
   });
   return { lenis, fit };
 }
+
+/* ---------------- for kit/sig.js: the signature interactions add their own heroes ---------------- */
+export const H = { lines, photo, esc, icon, money, num, statVal, priceTag, tel, PHOTO_URL, ALT };
+export function addHeroes(more, over = []) { Object.assign(HERO, more); over.forEach(k => OVER.add(k)); }

@@ -4,7 +4,7 @@
 import io, os, re, sys
 
 SITE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'site', 'studio')
-FILES = ['index.html', 'view/index.html', 'studio.js', 'kit/kit.js']
+FILES = ['index.html', 'view/index.html', 'studio.js', 'kit/kit.js', 'kit/sig.js']
 VER = re.compile(r"""((?:studio|kit|data)/[\w./-]*?\.(?:js|css)|\./[\w./-]+\.js|\.\./data/[\w.-]+\.js)(\?v=(\d+))?(['"])""")
 
 cur = 0

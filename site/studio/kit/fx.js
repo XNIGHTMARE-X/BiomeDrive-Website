@@ -525,3 +525,5 @@ function mosaic(still) {
     [0, 1, 7].forEach((o, n) => { const t = tiles[(start + o) % tiles.length]; setTimeout(() => { t.classList.add('fl'); setTimeout(() => t.classList.remove('fl'), 1300); }, n * 140); });
   }, 2600);
 }
+
+export { tickers, pointer, onScroll, fine, calm, lerp, clamp, ease };

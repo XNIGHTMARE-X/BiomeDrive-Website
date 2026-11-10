@@ -13,7 +13,8 @@ const [base, out, only] = process.argv.slice(2);
 mkdirSync(out, { recursive: true });
 const { TEMPLATES } = await import(pathToFileURL(join(here, '../../site/studio/data/templates.js')).href);
 const list = TEMPLATES.filter(t => (only === 'all' ? true : only === 'still' ? !(t.fx && t.fx.length) : only ? only.split(',').includes(t.id) : t.fx && t.fx.length));
-const W = 1440, H = 900;
+const SIG = new Set('switch gauge blueprint estimator wipe swatches scribble level route boxes tacho card3d slot clock typewriter deck goo glitch morph carousel3d flap dock wave breathe bubbles pulse orbit balance particles chart receipt throughtext horizon shutter polaroids petals grow'.split(' '));
+const W = +process.env.W || 1440, H = +process.env.H || 900;   // W=390 H=844 for a phone
 const port = 9100 + Math.floor(Math.random() * 150);
 const chrome = spawn('C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'fxc-'))}`, '--hide-scrollbars', '--enable-unsafe-swiftshader', '--use-angle=swiftshader', `--window-size=${W},${H}`, 'about:blank']);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -27,7 +28,7 @@ const ev = async e => { const r = await send('Runtime.evaluate', { expression: e
 const shot = async name => { const r = await send('Page.captureScreenshot', { format: 'jpeg', quality: 62 }); writeFileSync(join(out, name + '.jpg'), Buffer.from(r.result.data, 'base64')); };
 const mouse = (x, y) => send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y, pointerType: 'mouse' });
 await send('Page.enable'); await send('Runtime.enable');
-await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: 1, mobile: false });
+await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: 1, mobile: W < 700 });
 
 let bad = 0;
 for (const t of list) {
@@ -47,6 +48,7 @@ for (const t of list) {
     r.drum = q('.drum-in') ? q('.drum-in').style.getPropertyValue('--rot') : null;
     r.mosaic = q('[data-mosaic]') ? q('[data-mosaic]').classList.contains('in') : null;
     r.hidden = [...document.querySelectorAll('.hero [data-r].in')].filter(e => { const c = getComputedStyle(e); return c.opacity === '0' || (e.dataset.r.startsWith('clip') && !['none', 'inset(0px)', 'inset(0px round 0px)', 'circle(75% at 50% 50%)'].includes(c.clipPath)); }).length;
+    r.sig = (() => { const e = q('[data-sig]'); return e ? { k: e.dataset.sig, live: e.dataset.live === '1', w: Math.round(e.getBoundingClientRect().width), h: Math.round(e.getBoundingClientRect().height) } : null; })();
     r.cursor = !!q('.cur-ring');
     r.topoInk = (() => { const c = q('[data-topo]'); if (!c) return null; const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 3; i < d.length; i += 4 * 97) if (d[i] > 10) n++; return n; })();
     r.liquidGL = q('[data-liquid]') ? q('[data-liquid]').classList.contains('gl') : null;
@@ -79,9 +81,10 @@ for (const t of list) {
   const need = (ok, what) => { if (!ok) checks.push(what); };
   t.fx = t.fx || [];
   if (t.fx.includes('loader')) need(top.loaderGone, 'preloader still up');
-  if (t.m.h === 'chars') need(top.chars > 0, 'letters not split');
+  if (t.m.h === 'chars' && !['throughtext', 'typewriter'].includes(t.hero)) need(top.chars > 0, 'letters not split');
   if (t.m.h === 'words') need(top.words > 0, 'words not split');
   need(top.hidden === 0, top.hidden + ' revealed hero parts still invisible');
+  if (SIG.has(t.hero)) need(top.sig && top.sig.k === t.hero && top.sig.live && (t.hero === 'typewriter' || (top.sig.w > 200 && top.sig.h > 150)), 'signature opening not running ' + JSON.stringify(top.sig));
   if (t.hero === 'lens') need(top.lens > 40, 'lens closed');
   if (t.hero === 'dots') need(top.dotsInk > 50, 'dots not drawn');
   if (t.hero === 'typewall') need(!!top.wall, 'type wall idle');
