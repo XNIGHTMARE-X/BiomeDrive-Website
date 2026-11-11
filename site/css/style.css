@@ -246,8 +246,14 @@ ul, ol { list-style: none; }
 .foot-row nav { display: flex; gap: 18px; }
 .foot-row p { color: var(--text-2); justify-self: end; }
 .foot-row a:hover { opacity: .6; }
-.foot-word { padding-bottom: clamp(10px, 1.4vw, 22px); pointer-events: none; user-select: none; -webkit-user-select: none; }
-.foot-word i { display: inline-block; font-style: normal; transform-origin: 50% 100%; }
+.foot-word { position: relative; padding-bottom: clamp(10px, 1.4vw, 22px); pointer-events: none; user-select: none; -webkit-user-select: none; }
+.foot-word > span i { display: inline-block; font-style: normal; }
+/* the 3D wordmark (js/footword.js): a WebGL canvas over the fitted word, which stays in place, hidden, for measuring */
+.foot-word.fw-on > span { visibility: hidden; }
+.fw3-c { position: absolute; pointer-events: none; }
+.fw3 { position: absolute; pointer-events: auto; cursor: grab; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+.fw3.drag { cursor: grabbing; }
+.calm .fw3 { pointer-events: none; cursor: default; }
 
 /* ---------- try the Studio: a fan of template windows that opens as you scroll ---------- */
 .try { padding: clamp(70px, 10vh, 120px) var(--gut) clamp(90px, 14vh, 170px); border-top: 1px solid var(--line); overflow-x: clip; }
