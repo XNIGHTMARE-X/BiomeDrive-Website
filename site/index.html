@@ -13,7 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,300..900&family=Inter+Tight:ital,wght@0,300..800;1,300..500&family=Newsreader:ital,opsz,wght@1,6..72,300..500&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=10">
+<link rel="stylesheet" href="css/style.css?v=19">
+<link rel="stylesheet" href="css/pages.css?v=4">
 <script>
   // Before first paint: reduced motion, and the loader (once per visit; it clears itself after 9 s if anything fails).
   (function () {
@@ -35,8 +36,8 @@
     <span class="brand-mark" aria-hidden="true"></span>
     <span>BiomeDrive</span>
   </a>
-  <nav class="nav-links" aria-label="Sections"><a href="#work">Work</a><a href="#about">About</a><a href="#studio">Studio</a></nav>
-  <a class="nav-cta" href="#contact"><i></i><span class="long">Taking new projects</span><span class="short">Contact</span></a>
+  <nav class="nav-links" aria-label="Sections"><a href="#work">Work</a><a href="#about">About</a><a href="/studio/">Studio</a><a href="/pricing/">Pricing</a></nav>
+  <a class="nav-cta" href="/contact/"><i></i><span class="long">Contact us</span><span class="short">Contact</span></a>
 </header>
 
 <main>
@@ -49,21 +50,20 @@
       <h1 class="home-word"><span>BiomeDrive</span></h1>
       <div class="home-bar">
         <span>Web design studio</span>
-        <nav aria-label="Sections"><a href="#work">Work</a>, <a href="#about">About</a>, <a href="#studio">Studio</a></nav>
-        <a href="#contact">Contact</a>
+        <nav aria-label="Sections"><a href="#work">Work</a>, <a href="#about">About</a>, <a href="/studio/">Studio</a>, <a href="/pricing/">Pricing</a></nav>
+        <a href="/contact/">Contact</a>
       </div>
     </header>
     <div class="home-copy">
-      <p class="home-k">(00)</p>
       <p class="home-lede">We design, build and host websites for small businesses in the US and Europe.</p>
-      <p class="home-links"><a href="#work">See the work ↓</a><a href="#contact">Start a project</a></p>
+      <p class="home-links"><a href="#work">See the work ↓</a><a href="/contact/">Start a project</a></p>
     </div>
     <p class="home-scroll">Scroll down <span>↓</span></p>
   </section>
 
   <section class="say" id="about" aria-label="About">
-    <p class="say-p" data-words><span class="say-n">(1)</span>A two-person studio that designs, builds and hosts websites for small businesses: restaurants, builders, shops and clinics, made by hand and never from a template.</p>
-    <p class="say-p say-2" data-words><span class="say-n">(2)</span>We make sites that feel like the business behind them. Fast on every phone, easy to update, and looked after long after launch.</p>
+    <p class="say-p" data-words>A two-person studio that designs, builds and hosts websites for small businesses, made by hand and never from a template.</p>
+    <p class="say-p say-2" data-words>We make sites that feel like the business behind them. Fast on every phone, easy to update, and looked after long after launch.</p>
     <div class="say-small">
       <p>No page builders and no bloated themes. Hand-written code that loads fast and is easy to find on Google.</p>
       <p>You talk to the two people who design and build your site, from the first call to every change after launch.</p>
@@ -95,7 +95,7 @@
 <!-- ================= WHAT WE DO ================= -->
 <section class="drum" id="services" aria-labelledby="drum-h">
   <div class="drum-stage">
-    <div class="drum-top"><h2 class="drum-k" id="drum-h">(3) What we do</h2><span id="drumCount">01 / 08</span></div>
+    <div class="drum-top"><h2 class="drum-k" id="drum-h">What we do</h2><span id="drumCount">01 / 08</span></div>
     <ul class="drum-list" id="drum">
       <li>Web design</li><li>Web development</li><li>Hosting &amp; domains</li><li>Booking &amp; forms</li>
       <li>Dashboards &amp; admin</li><li>Speed &amp; SEO</li><li>Motion &amp; 3D</li><li>Care &amp; updates</li>
@@ -116,7 +116,7 @@
   </ul>
   <div class="ix" id="ix">
     <div class="ix-stage">
-      <div class="ix-top"><span>(4) Selected work</span><span>Scroll to browse · click to open</span></div>
+      <div class="ix-top"><span>Selected work</span><span>Scroll to browse · click to open</span></div>
       <div class="ix-strip" id="ixStrip"></div>
       <div class="ix-line">
         <span class="ix-n" id="ixN">01</span>
@@ -132,7 +132,7 @@
 <!-- ================= STUDIO ================= -->
 <section class="team" id="studio" aria-labelledby="team-h">
   <h2 class="sr-only" id="team-h">Studio</h2>
-  <p class="say-p" data-words><span class="say-n">(5)</span>Two people who care about the details. The designers, the developers and the ones who answer your email.</p>
+  <p class="say-p" data-words>Two people who care about the details. The designers, the developers and the ones who answer your email.</p>
   <div class="team-list">
     <article class="tm">
       <a class="tm-name" href="https://naheel-n-akhtar.vercel.app/index.html" target="_blank" rel="noopener">Naheel N Akhtar</a>
@@ -145,23 +145,22 @@
   </div>
 </section>
 
-<!-- ================= CONTACT ================= -->
-<section class="contact" id="contact" aria-labelledby="contact-h">
-  <p class="contact-k">(6) Contact</p>
-  <h2 id="contact-h" class="contact-h">Let’s build <em>yours.</em></h2>
-  <div class="contact-grid">
-    <div>
-      <p class="contact-lede">No website yet, or one that’s tired? Tell us about your business and we’ll reply within one business day with ideas and a rough plan.</p>
-      <a class="mail" id="mailLink" href="#">hello@biomedrive.com</a>
+<!-- ================= TRY THE STUDIO ================= -->
+<section class="try" id="try" aria-labelledby="try-h">
+  <div class="try-top"><span>Studio</span><span>150 looks · 76 palettes · 39 type pairings</span></div>
+  <div class="try-grid">
+    <div class="try-copy">
+      <h2 class="try-h" id="try-h">Try on your website <em>before</em> we build it.</h2>
+      <p class="try-p">Pick a look made for your kind of business, swap its colours and fonts, and send it to us. We start from there.</p>
+      <a class="btn" href="/studio/">Open the Studio <span class="arr" aria-hidden="true">→</span></a>
     </div>
-    <form class="form" id="form" novalidate>
-      <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required></div>
-      <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
-      <div class="field"><label for="f-site">Business or current website</label><input id="f-site" name="site" autocomplete="url" placeholder="Optional"></div>
-      <div class="field"><label for="f-msg">What do you need?</label><textarea id="f-msg" name="message" rows="3"></textarea></div>
-      <button class="btn" type="submit">Send <span class="arr">→</span></button>
-      <p class="form-msg" id="formMsg" role="status"></p>
-    </form>
+    <ul class="try-fan" id="tryFan" aria-label="A few looks from the Studio">
+      <li><a href="/studio/?t=arc"><span class="try-win"><i></i><i></i><i></i></span><img src="/studio/thumbs/arc.webp" alt="" loading="lazy" width="576" height="1440"><span class="try-cap">Arc · Electrician</span></a></li>
+      <li><a href="/studio/?t=afterhours"><span class="try-win"><i></i><i></i><i></i></span><img src="/studio/thumbs/afterhours.webp" alt="" loading="lazy" width="576" height="1440"><span class="try-cap">After Hours · Bar</span></a></li>
+      <li><a href="/studio/?t=pigment"><span class="try-win"><i></i><i></i><i></i></span><img src="/studio/thumbs/pigment.webp" alt="" loading="lazy" width="576" height="1440"><span class="try-cap">Pigment · Painter</span></a></li>
+      <li><a href="/studio/?t=thermal"><span class="try-win"><i></i><i></i><i></i></span><img src="/studio/thumbs/thermal.webp" alt="" loading="lazy" width="576" height="1440"><span class="try-cap">Thermal · Heating and cooling</span></a></li>
+      <li><a href="/studio/?t=petalfall"><span class="try-win"><i></i><i></i><i></i></span><img src="/studio/thumbs/petalfall.webp" alt="" loading="lazy" width="576" height="1440"><span class="try-cap">Petalfall · Florist</span></a></li>
+    </ul>
   </div>
 </section>
 
@@ -169,11 +168,12 @@
 
 <footer class="foot">
   <div class="foot-row">
-    <nav aria-label="Footer"><a href="#work">Work</a><a href="#about">About</a><a href="#studio">Studio</a></nav>
-    <a href="#contact">Contact</a>
+    <nav aria-label="Footer"><a href="#work">Work</a><a href="#about">About</a><a href="/studio/">Studio</a><a href="/pricing/">Pricing</a></nav>
+    <a href="/contact/">Contact</a>
     <p>Remote, for the US and Europe · © <span id="year">2026</span></p>
     <a href="#top">Back to top ↑</a>
   </div>
+  <nav class="foot-legal" aria-label="Legal"><a href="/terms/">Terms</a><a href="/refunds/">Refunds and cancellation</a><a href="/privacy/">Privacy</a><a href="/delivery/">Service delivery</a></nav>
   <p class="foot-word" aria-hidden="true"><span>BiomeDrive</span></p>
 </footer>
 
@@ -194,10 +194,12 @@
   </div>
 </dialog>
 
+
 <!-- Lenis 1.1.13 and Motion 11.11.13 (MIT), hosted with the site -->
 <script src="js/vendor/lenis.min.js" defer></script>
 <script src="js/vendor/motion.js" defer></script>
 <script src="js/topo.js?v=8" defer></script>
-<script src="js/main.js?v=10" defer></script>
+<script src="js/main.js?v=14" defer></script>
+<script src="js/footword.js?v=6" defer></script>
 </body>
 </html>

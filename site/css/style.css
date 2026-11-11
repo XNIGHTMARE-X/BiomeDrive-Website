@@ -109,7 +109,6 @@ ul, ol { list-style: none; }
 .home-bar a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .home-bar > :last-child { justify-self: end; }
 .home-copy { position: absolute; z-index: 4; left: var(--gut); bottom: clamp(70px, 12vh, 130px); width: min(38%, 540px); }
-.home-k { font-family: var(--f-mono); font-size: 11px; letter-spacing: .1em; color: var(--mute); }
 .home-lede { margin-top: 14px; font-size: clamp(22px, 2vw, 34px); font-weight: 500; line-height: 1.06; letter-spacing: -.035em; }
 .home-links { display: flex; gap: 22px; margin-top: 22px; font-size: 14px; font-weight: 500; }
 .home-links a { border-bottom: 1px solid currentColor; padding-bottom: 1px; transition: opacity .3s; }
@@ -121,10 +120,8 @@ ul, ol { list-style: none; }
 /* statements: words brighten as you read */
 .say { position: relative; z-index: 2; background: var(--bg); padding: clamp(80px, 13vh, 160px) var(--gut) clamp(120px, 18vh, 220px); }
 .say-p { font-size: clamp(30px, 4.3vw, 84px); font-weight: 500; line-height: .98; letter-spacing: -.045em; max-width: 1700px; }
-.say-n { display: inline-block; width: 21%; min-width: 3em; font-weight: 400; letter-spacing: -.02em; }
 .say > .say-p:first-child { max-width: 64%; }
 .say-2 { margin: clamp(30px, 5vh, 70px) 0 0 auto; width: 54%; }
-.say-2 .say-n { width: auto; margin-left: -5.4em; padding-right: 2.2em; }
 .say-p .w { opacity: .22; }
 .calm .say-p .w { opacity: 1 !important; }
 .say-small { display: grid; gap: 18px; margin: clamp(40px, 6vh, 70px) 0 0 46%; max-width: 300px; font-size: 15px; line-height: 1.35; font-weight: 500; }
@@ -219,7 +216,7 @@ ul, ol { list-style: none; }
 .contact-h em { font-family: var(--f-serif); font-style: italic; font-weight: 300; letter-spacing: -.04em; color: var(--text-2); }
 .contact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(36px, 6vw, 110px); margin-top: clamp(48px, 6vw, 90px); align-items: start; }
 .contact-lede { font-size: clamp(17px, 1.3vw, 21px); line-height: 1.45; color: var(--text-2); max-width: 500px; }
-.mail { display: inline-block; margin-top: 30px; font-weight: 500; font-size: clamp(24px, 2.8vw, 46px); letter-spacing: -.04em; line-height: 1; border-bottom: 1px solid currentColor; padding-bottom: 6px; overflow-wrap: anywhere; transition: opacity .3s; }
+.mail { display: inline-block; margin-top: 30px; text-align: left; font-weight: 500; font-size: clamp(24px, 2.8vw, 46px); letter-spacing: -.04em; line-height: 1; border-bottom: 1px solid currentColor; padding-bottom: 6px; overflow-wrap: anywhere; transition: opacity .3s; }
 .mail:hover { opacity: .6; }
 .form { display: grid; gap: 22px; }
 .field { display: grid; gap: 6px; }
@@ -231,12 +228,51 @@ ul, ol { list-style: none; }
 .form .btn { justify-self: start; }
 .form-msg { min-height: 1.3em; font-size: 13px; color: var(--text-2); }
 
+/* mail picker: a small menu under the address or the Send button (placed by main.js) */
+.mailpick { position: fixed; left: 0; top: 0; z-index: 150; width: 232px; padding: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: 0 24px 60px rgba(0, 0, 0, .55); opacity: 0; transform: translateY(-6px) scale(.98); transform-origin: top left; transition: opacity .22s var(--ease), transform .45s var(--ease); }
+.mailpick[hidden] { display: none; }
+.mailpick.up { transform: translateY(6px) scale(.98); transform-origin: bottom left; }
+.mailpick.open { opacity: 1; transform: none; }
+.mailpick-k { padding: 10px 12px 6px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
+.mailpick button { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px; border-radius: 10px; font-size: 16px; font-weight: 500; text-align: left; transition: background .2s; }
+.mailpick button:hover, .mailpick button:focus-visible { background: rgba(241, 240, 236, .08); outline: none; }
+.mailpick .arr { color: var(--text-2); transition: transform .45s var(--spring), color .2s; }
+.mailpick button:hover .arr, .mailpick button:focus-visible .arr { color: var(--text); transform: translate(2px, -2px); }
+.mailpick button[data-mailer="app"]:hover .arr, .mailpick button[data-mailer="app"]:focus-visible .arr { transform: translateX(3px); }
+.calm .mailpick, .calm .mailpick .arr { transition: none; }
+
 .foot { padding: 0 var(--gut); overflow: hidden; }
 .foot-row { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr auto 1fr auto; gap: 20px; align-items: center; padding: 22px 0; border-top: 1px solid var(--line); font-size: 13px; font-weight: 500; }
 .foot-row nav { display: flex; gap: 18px; }
 .foot-row p { color: var(--text-2); justify-self: end; }
 .foot-row a:hover { opacity: .6; }
-.foot-word { padding-bottom: clamp(10px, 1.4vw, 22px); pointer-events: none; user-select: none; -webkit-user-select: none; }
+.foot-word { position: relative; padding-bottom: clamp(10px, 1.4vw, 22px); pointer-events: none; user-select: none; -webkit-user-select: none; }
+.foot-word > span i { display: inline-block; font-style: normal; }
+/* the 3D wordmark (js/footword.js): a WebGL canvas over the fitted word, which stays in place, hidden, for measuring */
+.foot-word.fw-on > span { visibility: hidden; }
+.fw3-c { position: absolute; pointer-events: none; }
+.fw3 { position: absolute; pointer-events: auto; cursor: grab; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+.fw3.drag { cursor: grabbing; }
+.calm .fw3 { pointer-events: none; cursor: default; }
+
+/* ---------- try the Studio: a fan of template windows that opens as you scroll ---------- */
+.try { padding: clamp(70px, 10vh, 120px) var(--gut) clamp(90px, 14vh, 170px); border-top: 1px solid var(--line); overflow-x: clip; }
+.try-top { display: flex; justify-content: space-between; gap: 20px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
+.try-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(30px, 5vw, 90px); align-items: center; margin-top: clamp(40px, 7vh, 80px); }
+.try-copy { display: grid; gap: 26px; justify-items: start; }
+.try-h { font-size: clamp(34px, 4.3vw, 80px); font-weight: 500; line-height: .98; letter-spacing: -.045em; max-width: 12ch; }
+.try-h em { font-family: var(--f-serif); font-weight: 400; letter-spacing: -.02em; }
+.try-p { max-width: 36ch; font-size: 17px; line-height: 1.45; color: var(--text-2); }
+.try-fan { position: relative; height: clamp(300px, 34vw, 560px); }
+.try-fan li { position: absolute; left: 50%; top: 50%; width: 54%; margin: 0; transform: translate(-50%, -50%); transform-origin: 50% 170%; will-change: transform; }
+.try-fan a { display: block; position: relative; border-radius: 12px; overflow: hidden; background: var(--surface); box-shadow: 0 0 0 1px var(--line), 0 40px 70px -40px rgba(0, 0, 0, .9); transition: filter .4s var(--ease); }
+.try-win { display: flex; gap: 6px; align-items: center; height: 24px; padding: 0 12px; background: #1b1b1d; }
+.try-win i { width: 8px; height: 8px; border-radius: 50%; background: #3a3a3e; }
+.try-fan img { width: 100%; aspect-ratio: 16 / 10; height: auto; object-fit: cover; object-position: top; }
+.try-cap { position: absolute; left: 10px; bottom: 10px; padding: 7px 11px; border-radius: 999px; background: var(--bg); font-family: var(--f-mono); font-size: 11px; letter-spacing: .04em; color: var(--text); opacity: 0; transform: translateY(6px); transition: opacity .3s var(--ease), transform .4s var(--ease); white-space: nowrap; }
+.try-fan.hov a { filter: brightness(.55); }
+.try-fan li.hot a { filter: none; }
+.try-fan li.hot .try-cap, .try-fan a:focus-visible .try-cap { opacity: 1; transform: none; }
 
 /* =========================================================
    PHONES
@@ -254,10 +290,8 @@ ul, ol { list-style: none; }
   .home-copy { width: auto; right: var(--gut); top: calc(var(--hh, 110px) + 5vh); bottom: auto; }
   .home-lede { font-size: clamp(24px, 7.4vw, 34px); }
   .home-scroll { color: var(--text-2); }
-  .say-n { width: auto; min-width: 0; padding-right: .45em; }
   .say-2 { width: auto; }
   .say > .say-p:first-child { max-width: none; }
-  .say-2 .say-n { margin-left: 0; padding-right: .45em; }
   .say-small, .team-list { margin-left: 0; }
   .card3d { width: 150px; margin-left: -75px; }
   .ix-stage { --wa: 76vw; }
@@ -278,5 +312,11 @@ ul, ol { list-style: none; }
   .tm { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .contact-grid { grid-template-columns: minmax(0, 1fr); }
   .foot-row { grid-template-columns: 1fr auto; }
+  .try-grid { grid-template-columns: minmax(0, 1fr); }
+  .try-top span:last-child { display: none; }
+  .try-fan { height: 62vw; margin: 0 calc(var(--gut) * -1); }
+  .try-fan li { width: 64%; }
+  .try-win { height: 16px; gap: 4px; padding: 0 8px; } .try-win i { width: 5px; height: 5px; }
+  .try-p { font-size: 16px; }
   .foot-row p { display: none; }
 }

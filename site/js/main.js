@@ -1,13 +1,10 @@
 /* BiomeDrive v7 · main.js
    One black page after osply.co: a loader, the home header with a contour terrain you can stir,
    a card that flutters down the intro, statements that brighten as you read, a services drum,
-   the project index (WebGL covers with a mouse trail) and its project window, and contact.
+   the project index (WebGL covers with a mouse trail) and its project window. Contact lives on /contact/.
    Lenis and Motion are optional: the page works without them. */
 
-// ---- Fill this in before going live ----
-const CONFIG = {
-  email: 'hello@biomedrive.com', // placeholder: replace with the real inbox on your domain
-};
+// ---- Contact settings live in js/config.js (shared with the other pages) ----
 
 // ---- The projects (the index shows each site's home page as its cover) ----
 const PROJECTS = [
@@ -271,6 +268,30 @@ const PROJECTS = [
     if (now !== drumCur) { drumCur = now; $('#drumCount').textContent = `${pad(now + 1)} / ${pad(n)}`; }
   }
 
+  /* ---------------- try the Studio: the windows fan out as the section comes in; the one you point at lifts ---------------- */
+  const fan = $('#tryFan'), fanLis = fan ? $$('li', fan) : [];
+  const fanS = fanLis.map(() => ({ x: 0, y: 0, r: 0, l: 0 }));
+  let fanHot = -1;
+  fanLis.forEach((li, i) => {
+    li.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse') return; fanHot = i; fan.classList.add('hov'); fanLis.forEach((o, k) => o.classList.toggle('hot', k === i)); });
+    li.addEventListener('pointerleave', () => { if (fanHot !== i) return; fanHot = -1; fan.classList.remove('hov'); li.classList.remove('hot'); });
+  });
+  function tickFan() {
+    if (!fan) return;
+    const r = fan.getBoundingClientRect();
+    if (r.bottom < -100 || r.top > vh + 100) return;
+    const p = calm ? 1 : clamp((vh - r.top) / (vh * 0.75)), e = 1 - Math.pow(1 - p, 3), W = r.width, mid = (fanLis.length - 1) / 2;
+    fanLis.forEach((li, i) => {
+      const d = i - mid, s = fanS[i], hot = i === fanHot, k = calm ? 1 : 0.14;
+      s.x += (d * W * 0.1 * e - s.x) * k;
+      s.y += ((hot ? -W * 0.05 : 0) - s.y) * k;
+      s.r += (d * 8 * e - s.r) * k;
+      s.l += ((hot ? 1 : 0) - s.l) * k;
+      li.style.transform = `translate(-50%, -50%) translate3d(${s.x.toFixed(1)}px, ${s.y.toFixed(1)}px, 0) rotate(${s.r.toFixed(2)}deg) scale(${(1 + s.l * 0.05).toFixed(3)})`;
+      li.style.zIndex = hot ? 20 : 10 - Math.abs(Math.round(d));
+    });
+  }
+
   /* =========================================================
      WebGL for the work covers: a fluid mouse trail that ripples the covers' edges
      and leaves a faint smoke behind, plus a bend while scrolling.
@@ -503,23 +524,7 @@ const PROJECTS = [
   const nav = $('#nav');
   const updateNav = () => nav.classList.toggle('solid', homeHead.getBoundingClientRect().bottom < 0);
 
-  /* ---------------- contact ---------------- */
-  const mail = $('#mailLink');
-  mail.textContent = CONFIG.email; mail.href = `mailto:${CONFIG.email}`;
   $('#year').textContent = new Date().getFullYear();
-  const form = $('#form'), msg = $('#formMsg');
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const d = new FormData(form);
-    const name = (d.get('name') || '').trim(), email = (d.get('email') || '').trim();
-    const badEmail = !/^\S+@\S+\.\S+$/.test(email);
-    $('#f-name').closest('.field').classList.toggle('err', !name);
-    $('#f-email').closest('.field').classList.toggle('err', badEmail);
-    if (!name || badEmail) { msg.textContent = !name ? 'Add your name so we know who to reply to.' : 'Add an email we can reply to.'; return; }
-    const body = `Name: ${name}\nEmail: ${email}\nBusiness / site: ${d.get('site') || '-'}\n\n${(d.get('message') || '').trim()}`;
-    location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(`New project from ${name}`)}&body=${encodeURIComponent(body)}`;
-    msg.textContent = 'Opening your email app…';
-  });
 
   /* ---------------- one loop ---------------- */
   let lastT = performance.now(), lastY = scrollY(), vel = 0;
@@ -535,6 +540,7 @@ const PROJECTS = [
     tickWords();
     tickDrum();
     tickIndex(dt);
+    tickFan();
     updateNav();
     requestAnimationFrame(frame);
   }
