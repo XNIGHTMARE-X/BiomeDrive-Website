@@ -248,6 +248,25 @@ ul, ol { list-style: none; }
 .foot-row a:hover { opacity: .6; }
 .foot-word { padding-bottom: clamp(10px, 1.4vw, 22px); pointer-events: none; user-select: none; -webkit-user-select: none; }
 
+/* ---------- try the Studio: a fan of template windows that opens as you scroll ---------- */
+.try { padding: clamp(70px, 10vh, 120px) var(--gut) clamp(90px, 14vh, 170px); border-top: 1px solid var(--line); overflow-x: clip; }
+.try-top { display: flex; justify-content: space-between; gap: 20px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
+.try-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(30px, 5vw, 90px); align-items: center; margin-top: clamp(40px, 7vh, 80px); }
+.try-copy { display: grid; gap: 26px; justify-items: start; }
+.try-h { font-size: clamp(34px, 4.3vw, 80px); font-weight: 500; line-height: .98; letter-spacing: -.045em; max-width: 12ch; }
+.try-h em { font-family: var(--f-serif); font-weight: 400; letter-spacing: -.02em; }
+.try-p { max-width: 36ch; font-size: 17px; line-height: 1.45; color: var(--text-2); }
+.try-fan { position: relative; height: clamp(300px, 34vw, 560px); }
+.try-fan li { position: absolute; left: 50%; top: 50%; width: 54%; margin: 0; transform: translate(-50%, -50%); transform-origin: 50% 170%; will-change: transform; }
+.try-fan a { display: block; position: relative; border-radius: 12px; overflow: hidden; background: var(--surface); box-shadow: 0 0 0 1px var(--line), 0 40px 70px -40px rgba(0, 0, 0, .9); transition: filter .4s var(--ease); }
+.try-win { display: flex; gap: 6px; align-items: center; height: 24px; padding: 0 12px; background: #1b1b1d; }
+.try-win i { width: 8px; height: 8px; border-radius: 50%; background: #3a3a3e; }
+.try-fan img { width: 100%; aspect-ratio: 16 / 10; height: auto; object-fit: cover; object-position: top; }
+.try-cap { position: absolute; left: 10px; bottom: 10px; padding: 7px 11px; border-radius: 999px; background: var(--bg); font-family: var(--f-mono); font-size: 11px; letter-spacing: .04em; color: var(--text); opacity: 0; transform: translateY(6px); transition: opacity .3s var(--ease), transform .4s var(--ease); white-space: nowrap; }
+.try-fan.hov a { filter: brightness(.55); }
+.try-fan li.hot a { filter: none; }
+.try-fan li.hot .try-cap, .try-fan a:focus-visible .try-cap { opacity: 1; transform: none; }
+
 /* =========================================================
    PHONES
    ========================================================= */
@@ -286,5 +305,11 @@ ul, ol { list-style: none; }
   .tm { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .contact-grid { grid-template-columns: minmax(0, 1fr); }
   .foot-row { grid-template-columns: 1fr auto; }
+  .try-grid { grid-template-columns: minmax(0, 1fr); }
+  .try-top span:last-child { display: none; }
+  .try-fan { height: 62vw; margin: 0 calc(var(--gut) * -1); }
+  .try-fan li { width: 64%; }
+  .try-win { height: 16px; gap: 4px; padding: 0 8px; } .try-win i { width: 5px; height: 5px; }
+  .try-p { font-size: 16px; }
   .foot-row p { display: none; }
 }
