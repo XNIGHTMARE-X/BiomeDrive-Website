@@ -247,6 +247,7 @@ ul, ol { list-style: none; }
 .foot-row p { color: var(--text-2); justify-self: end; }
 .foot-row a:hover { opacity: .6; }
 .foot-word { padding-bottom: clamp(10px, 1.4vw, 22px); pointer-events: none; user-select: none; -webkit-user-select: none; }
+.foot-word i { display: inline-block; font-style: normal; transform-origin: 50% 100%; }
 
 /* ---------- try the Studio: a fan of template windows that opens as you scroll ---------- */
 .try { padding: clamp(70px, 10vh, 120px) var(--gut) clamp(90px, 14vh, 170px); border-top: 1px solid var(--line); overflow-x: clip; }
